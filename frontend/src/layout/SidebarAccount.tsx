@@ -1,21 +1,107 @@
-import { LogOut } from "lucide-react";
-import { roleLabel } from "../utils/role-routing";
-import type { AuthUser } from "../types/auth";
-export function SidebarAccount({ user, loggingOut, serviceAvailable, healthError, onLogout }: {
-  user: AuthUser; loggingOut: boolean; serviceAvailable: boolean; healthError: boolean; onLogout: () => void;
-}) {
-  const status = serviceAvailable ? "API y base de datos conectadas"
-    : healthError ? "API o base de datos no disponible" : "Verificando servicio";
-  return <div className="sidebar-foot">
-    <div className="system-status" role="status">
-      <span className={`status-dot ${serviceAvailable ? "online" : ""}`} /><span>{status}</span>
+import {
+  ChevronDown,
+  LogOut,
+} from "lucide-react";
+
+import {
+  useState,
+} from "react";
+
+import type {
+  AuthUser,
+} from "../types/auth";
+
+import {
+  roleLabel,
+} from "../utils/role-routing";
+
+interface SidebarAccountProps {
+  user: AuthUser;
+  loggingOut: boolean;
+  serviceAvailable: boolean;
+  healthError: boolean;
+  onLogout: () => void;
+}
+
+export function SidebarAccount({
+  user,
+  loggingOut,
+  onLogout,
+}: SidebarAccountProps) {
+  const [open, setOpen] =
+    useState(false);
+
+  const initial =
+    user.name
+      .trim()
+      .slice(0, 1)
+      .toUpperCase();
+
+  return (
+    <div className="sidebar-user-menu">
+
+      {/* Usuario */}
+      <button
+        type="button"
+        className={`sidebar-user-trigger ${
+          open
+            ? "sidebar-user-trigger--open"
+            : ""
+        }`}
+        aria-expanded={open}
+        onClick={() =>
+          setOpen(
+            (current) => !current,
+          )
+        }
+      >
+        <span
+          className="sidebar-user-avatar"
+          aria-hidden="true"
+        >
+          {initial}
+        </span>
+
+        <span className="sidebar-user-info">
+          <small>
+            Sesión actual
+          </small>
+
+          <strong>
+            {user.name}
+          </strong>
+
+          <span>
+            {roleLabel(user.role)}
+          </span>
+        </span>
+
+        <ChevronDown
+          className="sidebar-user-chevron"
+          aria-hidden="true"
+        />
+      </button>
+
+      {/* Menú */}
+      {open && (
+        <div className="sidebar-user-dropdown">
+          <button
+            type="button"
+            className="sidebar-user-logout"
+            disabled={loggingOut}
+            onClick={onLogout}
+          >
+            <LogOut
+              className="sidebar-user-logout-icon"
+              aria-hidden="true"
+            />
+
+            {loggingOut
+              ? "Cerrando sesión…"
+              : "Cerrar sesión"}
+          </button>
+        </div>
+      )}
     </div>
-    <div className="session-card">
-      <span className="avatar" aria-hidden="true">{user.name.slice(0, 1).toUpperCase()}</span>
-      <div><small>SESIÓN ACTUAL</small><strong>{user.name}</strong><span>{roleLabel(user.role)}</span></div>
-    </div>
-    <button type="button" className="logout-button" disabled={loggingOut} onClick={onLogout}>
-      <LogOut size={15} aria-hidden="true" />{loggingOut ? "Cerrando sesión…" : "Cerrar sesión"}
-    </button>
-  </div>;
+  );
 }

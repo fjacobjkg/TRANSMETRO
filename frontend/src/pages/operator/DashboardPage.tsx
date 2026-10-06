@@ -1,20 +1,28 @@
-import { Link } from "react-router-dom";
+import {
+  useAuth,
+} from "../../hooks/AuthContext";
 
-import { useAuth } from "../../hooks/AuthContext";
+import {
+  MetricGrid,
+} from "../../components/dashboard/MetricGrid";
 
-import { MetricGrid } from "../../components/dashboard/MetricGrid";
-import { QuickActions } from "../../components/dashboard/QuickActions";
-import { PageHeader } from "../../components/ui/PageHeader";
+import {
+  PageHeader,
+} from "../../components/ui/PageHeader";
 
 import "../../styles/pages/operator.css";
 
 
 export function OperatorDashboardPage() {
-  const { user } = useAuth();
+  const {
+    user,
+  } = useAuth();
+
 
   return (
     <section className="dashboard-page operator-dashboard">
 
+      {/* Encabezado */}
       <PageHeader
         eyebrow="OPERACIÓN DE ESTACIÓN"
         title={
@@ -22,38 +30,44 @@ export function OperatorDashboardPage() {
           (user?.name.split(" ")[0] ?? "")
         }
         description="Registra visitas y conteos de acceso en las estaciones que tienes asignadas."
-        actions={
-          <Link
-            className="button primary"
-            to="/operador/operations"
-          >
-            Registrar operación →
-          </Link>
-        }
       />
 
+
+      {/* Indicadores */}
       <MetricGrid
         metrics={[
           {
-            title: "Estaciones asignadas",
-            value: user?.stationIds.length,
-            note: "Tu ámbito de operación",
+            title:
+              "Estaciones asignadas",
+            value:
+              user?.stationIds.length,
+            note:
+              "Tu ámbito de operación",
           },
           {
-            title: "Demanda alta",
-            value: "≥ 150 %",
-            note: "Regla de unidad adicional",
+            title:
+              "Demanda alta",
+            value:
+              "≥ 150 %",
+            note:
+              "Regla de unidad adicional",
           },
           {
-            title: "Ocupación baja",
-            value: "< 25 %",
-            note: "Regla de espera adicional",
+            title:
+              "Ocupación baja",
+            value:
+              "< 25 %",
+            note:
+              "Regla de espera adicional",
           },
         ]}
       />
 
-      <div className="dashboard-grid operator-dashboard-grid">
 
+      {/* Información principal */}
+      <div className="operator-dashboard-grid">
+
+        {/* Flujo */}
         <article className="panel operator-workflow">
 
           <span className="eyebrow-text">
@@ -67,7 +81,9 @@ export function OperatorDashboardPage() {
           <ol className="workflow-list">
 
             <li>
-              <span>01</span>
+              <span>
+                01
+              </span>
 
               <div>
                 <strong>
@@ -75,13 +91,17 @@ export function OperatorDashboardPage() {
                 </strong>
 
                 <p>
-                  Selecciona la línea y una unidad disponible.
+                  Selecciona la línea y una
+                  unidad disponible.
                 </p>
               </div>
             </li>
 
+
             <li>
-              <span>02</span>
+              <span>
+                02
+              </span>
 
               <div>
                 <strong>
@@ -89,13 +109,17 @@ export function OperatorDashboardPage() {
                 </strong>
 
                 <p>
-                  Captura ocupación y demanda de cada visita.
+                  Captura ocupación y demanda
+                  de cada visita.
                 </p>
               </div>
             </li>
 
+
             <li>
-              <span>03</span>
+              <span>
+                03
+              </span>
 
               <div>
                 <strong>
@@ -103,7 +127,8 @@ export function OperatorDashboardPage() {
                 </strong>
 
                 <p>
-                  Registra los accesos por medio en tus estaciones.
+                  Registra los accesos por medio
+                  en tus estaciones.
                 </p>
               </div>
             </li>
@@ -113,13 +138,10 @@ export function OperatorDashboardPage() {
         </article>
 
 
-        <aside className="dashboard-side operator-dashboard-side">
+        {/* Estaciones asignadas */}
+        <aside className="operator-dashboard-side">
 
-          <QuickActions
-            role="OPERADOR_ESTACION"
-          />
-
-          <article className="help-card">
+          <article className="assigned-stations-card">
 
             <span className="eyebrow-text">
               ESTACIONES ASIGNADAS
@@ -131,8 +153,7 @@ export function OperatorDashboardPage() {
 
             <p>
               {user?.stationIds.length
-                ? "Identificadores: " +
-                  user.stationIds.join(", ")
+                ? `Identificadores: ${user.stationIds.join(", ")}`
                 : "No tienes estaciones asignadas. Solicita la asignación al administrador."}
             </p>
 

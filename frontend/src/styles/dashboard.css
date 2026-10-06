@@ -221,6 +221,480 @@
 
 
 /* ========================================
+   OPERATOR DASHBOARD
+======================================== */
+
+.operator-dashboard {
+  width: 100%;
+}
+
+
+/* ========================================
+   PAGE HEADER
+======================================== */
+
+.operator-dashboard .page-heading {
+  margin-bottom: 2rem;
+}
+
+
+.operator-dashboard .page-heading h1 {
+  margin:
+    0.55rem 0
+    0.65rem;
+
+  color:
+    var(--color-ink);
+
+  font-size: 2.25rem;
+  font-weight: 800;
+
+  letter-spacing: -0.045em;
+
+  line-height: 1.1;
+}
+
+
+.operator-dashboard .page-heading p {
+  max-width: 47rem;
+
+  color:
+    var(--color-muted);
+
+  font-size: 0.92rem;
+
+  line-height: 1.65;
+}
+
+
+.operator-dashboard .eyebrow-text {
+  color: #728d95;
+
+  font-size: 0.65rem;
+  font-weight: 800;
+
+  letter-spacing: 0.16em;
+
+  text-transform: uppercase;
+}
+
+
+/* ========================================
+   KPI GRID
+======================================== */
+
+.operator-dashboard .metric-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 1rem;
+
+  margin-bottom: 1.75rem;
+}
+
+
+/* ========================================
+   KPI CARD
+======================================== */
+
+.operator-dashboard .metric-card {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  gap: 0.65rem;
+
+  border:
+    1px solid
+    #dfe8ea;
+
+  border-radius: 0.9rem;
+
+  background: #ffffff;
+
+  padding:
+    1.55rem 1.6rem;
+
+  box-shadow:
+    0 4px 16px
+    rgba(22, 57, 70, 0.035);
+}
+
+
+.operator-dashboard .metric-card > span {
+  color: #5f7a83;
+
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+
+.operator-dashboard .metric-card > strong {
+  color:
+    var(--color-brand);
+
+  font-size: 2.15rem;
+  font-weight: 800;
+
+  letter-spacing: -0.05em;
+
+  line-height: 1.1;
+}
+
+
+.operator-dashboard .metric-card small {
+  color: #82979d;
+
+  font-size: 0.72rem;
+
+  line-height: 1.5;
+}
+
+
+/* ========================================
+   MAIN DASHBOARD GRID
+======================================== */
+
+.operator-dashboard-grid {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.8fr)
+    minmax(260px, 0.85fr);
+
+  align-items: start;
+
+  gap: 1.4rem;
+}
+
+
+/* ========================================
+   WORKFLOW
+======================================== */
+
+.operator-workflow {
+  min-height: 100%;
+
+  border-top:
+    3px solid
+    var(--color-accent);
+
+  padding:
+    2rem;
+}
+
+
+.operator-workflow h2 {
+  margin:
+    0.75rem 0
+    1.7rem;
+
+  color:
+    var(--color-ink);
+
+  font-size: 1.45rem;
+  font-weight: 800;
+
+  letter-spacing: -0.025em;
+}
+
+
+/* ========================================
+   WORKFLOW LIST
+======================================== */
+
+.workflow-list {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 1.7rem;
+
+  margin: 0;
+
+  padding: 0;
+
+  list-style: none;
+}
+
+
+.workflow-list li {
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 1rem;
+}
+
+
+.workflow-list li > span {
+  display: grid;
+
+  width: 2.4rem;
+  height: 2.4rem;
+
+  flex:
+    0 0 2.4rem;
+
+  place-items: center;
+
+  border:
+    1px solid
+    #d2e0e2;
+
+  border-radius: 50%;
+
+  background:
+    var(--color-brand-soft);
+
+  color:
+    var(--color-brand);
+
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+
+.workflow-list li > div {
+  min-width: 0;
+}
+
+
+.workflow-list strong {
+  color:
+    var(--color-ink);
+
+  font-size: 0.88rem;
+  font-weight: 750;
+
+  line-height: 1.4;
+}
+
+
+.workflow-list p {
+  margin:
+    0.4rem 0 0;
+
+  color:
+    var(--color-muted);
+
+  font-size: 0.78rem;
+
+  line-height: 1.55;
+}
+
+
+/* ========================================
+   DASHBOARD SIDE
+======================================== */
+
+.operator-dashboard-side {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 1rem;
+}
+
+
+/* ========================================
+   ASSIGNED STATIONS
+======================================== */
+
+.assigned-stations-card {
+  border:
+    1px solid
+    #cfdee1;
+
+  border-radius: 0.9rem;
+
+  background:
+    var(--color-brand-soft);
+
+  padding:
+    1.75rem;
+}
+
+
+.assigned-stations-card h3 {
+  margin:
+    0.8rem 0
+    0.75rem;
+
+  color:
+    var(--color-ink);
+
+  font-size: 1.15rem;
+  font-weight: 800;
+
+  letter-spacing: -0.02em;
+}
+
+
+.assigned-stations-card p {
+  margin: 0;
+
+  color:
+    #49636b;
+
+  font-size: 0.82rem;
+
+  line-height: 1.65;
+}
+
+
+/* ========================================
+   TABLET
+======================================== */
+
+@media (max-width: 1150px) {
+
+  .operator-dashboard-grid {
+    grid-template-columns:
+      1fr;
+  }
+
+
+  .operator-dashboard-side {
+    display: block;
+  }
+
+
+  .assigned-stations-card {
+    width: 100%;
+  }
+}
+
+
+/* ========================================
+   SMALL TABLET
+======================================== */
+
+@media (max-width: 900px) {
+
+  .operator-dashboard .page-heading h1 {
+    font-size: 2rem;
+  }
+
+
+  .operator-dashboard .metric-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+
+  .operator-workflow {
+    padding:
+      1.6rem;
+  }
+}
+
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 700px) {
+
+  .operator-dashboard .metric-grid {
+    grid-template-columns:
+      1fr;
+  }
+}
+
+
+/* ========================================
+   SMALL MOBILE
+======================================== */
+
+@media (max-width: 560px) {
+
+  .operator-dashboard .page-heading {
+    margin-bottom:
+      1.5rem;
+  }
+
+
+  .operator-dashboard .page-heading h1 {
+    font-size:
+      1.75rem;
+  }
+
+
+  .operator-dashboard .page-heading p {
+    font-size:
+      0.82rem;
+  }
+
+
+  .operator-dashboard .metric-grid {
+    gap:
+      0.75rem;
+
+    margin-bottom:
+      1.25rem;
+  }
+
+
+  .operator-dashboard .metric-card {
+    padding:
+      1.25rem;
+  }
+
+
+  .operator-dashboard .metric-card > strong {
+    font-size:
+      1.8rem;
+  }
+
+
+  .operator-workflow {
+    padding:
+      1.3rem;
+  }
+
+
+  .operator-workflow h2 {
+    font-size:
+      1.25rem;
+  }
+
+
+  .workflow-list {
+    gap:
+      1.35rem;
+  }
+
+
+  .workflow-list li {
+    gap:
+      0.8rem;
+  }
+
+
+  .workflow-list li > span {
+    width:
+      2.15rem;
+
+    height:
+      2.15rem;
+
+    flex-basis:
+      2.15rem;
+  }
+
+
+  .assigned-stations-card {
+    padding:
+      1.35rem;
+  }
+}
+
+/* ========================================
    RESPONSIVE
 ======================================== */
 

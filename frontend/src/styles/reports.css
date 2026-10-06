@@ -1,0 +1,16 @@
+.report-filters {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  padding: 17px;
+}
+.report-filters label {
+  min-width: 125px;
+  flex: 1;
+  font-size: 11px;
+}
+.report-filters input,.report-filters select {
+  font-size: 11px;
+}

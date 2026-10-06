@@ -1,0 +1,11 @@
+.operator-dashboard .metric-grid  {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.operator-dashboard .operator-workflow  {
+  border-top: 3px solid var(--color-accent);
+}
+@media (max-width: 700px)  {
+  .operator-dashboard .metric-grid  {
+    grid-template-columns: 1fr;
+  }
+}

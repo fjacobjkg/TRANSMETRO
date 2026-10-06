@@ -1,0 +1,6 @@
+.admin-dashboard .admin-control-card  {
+  border-top: 3px solid var(--color-accent);
+}
+.admin-dashboard .metric-card:first-child  {
+  border-bottom: 3px solid var(--color-brand);
+}

@@ -1,0 +1,119 @@
+.work-grid {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 17px;
+  margin-bottom: 20px;
+}
+.work-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.work-icon {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  place-items: center;
+  border: 1px solid #d9e7e8;
+  border-radius: 10px;
+  background: var(--color-brand-soft);
+  color: var(--color-brand);
+  font-size: 18px;
+}
+.form-row {
+  display: flex;
+  gap: 13px;
+}
+.form-row label {
+  flex: 1;
+}
+.next-stop {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #d5e3e5;
+  border-radius: 9px;
+  background: #f0f6f6;
+  padding: 15px;
+}
+.next-stop>span {
+  color: var(--color-muted);
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+.next-stop strong {
+  margin: 4px 0;
+  color: var(--color-ink);
+  font-size: 16px;
+}
+.next-stop small,.record-count {
+  color: var(--color-muted);
+  font-size: 10px;
+}
+.existing-count {
+  border-radius: 7px;
+  background: #f0f6f6;
+  padding: 11px;
+  color: #405c66;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.capacity-preview {
+  border-radius: 8px;
+  background: #f7fafb;
+  padding: 12px;
+  color: #49636b;
+  font-size: 11px;
+}
+.capacity-preview p {
+  margin: 7px 0 0;
+  color: #875d12;
+  font-size: 10px;
+}
+.trip-list-card {
+  margin-top: 8px;
+}
+.visit-timeline {
+  display: flex;
+  min-width: 210px;
+  flex-direction: column;
+  gap: 10px;
+  margin: 12px 0;
+  padding: 0;
+  list-style: none;
+}
+.visit-timeline li {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.visit-timeline li>strong {
+  color: var(--color-ink);
+  font-size: 11px;
+}
+.visit-timeline li>span:not(.badge) {
+  color: var(--color-muted);
+  font-size: 10px;
+}
+.visit-timeline .badge {
+  width: fit-content;
+}
+summary {
+  cursor: pointer;
+  color: var(--color-brand);
+  font-size: 10px;
+  font-weight: 600;
+}
+@media(max-width:900px) {
+  .work-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media(max-width:560px) {
+  .form-row {
+    gap: 9px;
+  }
+  .work-card-heading {
+    align-items: flex-start;
+  }
+}

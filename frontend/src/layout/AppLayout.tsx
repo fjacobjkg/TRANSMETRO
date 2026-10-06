@@ -7,20 +7,13 @@ import {
 } from "react-router-dom";
 
 import {
-  Button,
-} from "../components/ui/Button";
-
-import {
   useAppLayout,
 } from "../hooks/layout/useAppLayout";
 
 import {
-  roleLabel,
-} from "../utils/role-routing";
-
-import {
   Sidebar,
 } from "./Sidebar";
+
 
 export function AppLayout() {
   const layout =
@@ -29,7 +22,6 @@ export function AppLayout() {
   const {
     user,
     panels,
-    activePanel,
     open,
     setOpen,
     loggingOut,
@@ -37,13 +29,16 @@ export function AppLayout() {
     healthError,
   } = layout;
 
+
   if (!user) {
     return null;
   }
 
+
   return (
     <div className="app-shell">
 
+      {/* Accesibilidad */}
       <a
         className="skip-link"
         href="#main-content"
@@ -51,6 +46,8 @@ export function AppLayout() {
         Saltar al contenido
       </a>
 
+
+      {/* Fondo móvil */}
       {open && (
         <button
           type="button"
@@ -62,6 +59,8 @@ export function AppLayout() {
         />
       )}
 
+
+      {/* Sidebar */}
       <Sidebar
         panels={panels}
         user={user}
@@ -77,12 +76,15 @@ export function AppLayout() {
         }
       />
 
+
+      {/* Contenido */}
       <div className="main-shell">
 
-        <header className="action-bar">
+        {/* Solo móvil */}
+        <div className="mobile-navigation">
 
-          <Button
-            variant="quiet"
+          <button
+            type="button"
             className="mobile-menu-button"
             aria-label="Abrir navegación"
             aria-expanded={open}
@@ -90,48 +92,18 @@ export function AppLayout() {
               setOpen(!open)
             }
           >
-            <Menu size={18} />
-          </Button>
+            <Menu
+              size={20}
+              aria-hidden="true"
+            />
+          </button>
 
-          <div className="breadcrumb">
-            <span>
-              Transmetro
-            </span>
+          <span className="mobile-navigation-title">
+            Transmetro
+          </span>
 
-            <span aria-hidden="true">
-              /
-            </span>
+        </div>
 
-            <strong>
-              {activePanel?.title}
-            </strong>
-          </div>
-
-          <div className="action-bar-right">
-
-            <span className="role-chip">
-              {roleLabel(user.role)}
-            </span>
-
-            <time
-              className="today-date"
-              dateTime={
-                new Date()
-                  .toISOString()
-                  .slice(0, 10)
-              }
-            >
-              {new Date().toLocaleDateString(
-                "es-GT",
-                {
-                  day: "numeric",
-                  month: "long",
-                },
-              )}
-            </time>
-
-          </div>
-        </header>
 
         <main
           id="main-content"
@@ -140,15 +112,8 @@ export function AppLayout() {
           <Outlet />
         </main>
 
-        <footer className="app-footer">
-          Transmetro · Control interno
-
-          <span>
-            Guatemala · Datos centralizados
-          </span>
-        </footer>
-
       </div>
+
     </div>
   );
 }

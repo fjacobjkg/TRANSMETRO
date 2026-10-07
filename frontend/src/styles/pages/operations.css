@@ -1,174 +1,735 @@
+/* ========================================
+   OPERATOR OPERATIONS
+======================================== */
 
-/* OperationCard is shared inside the Operations module. */
-.operations-page .work-card {
-  border:
-    1px solid
-    #dfe8ea;
-
-  border-radius: 13px;
-
-  background:
-    var(--color-surface);
-
-  padding: 22px;
-
-  box-shadow:
-    0 3px 14px
-    rgba(22, 57, 70, 0.03);
+.operator-operations-page {
+  width: 100%;
 }
-.operations-page .work-card-heading {
-  display: flex;
 
-  align-items: center;
-  justify-content: space-between;
 
-  gap: 18px;
+/* ========================================
+   PAGE HEADER
+======================================== */
 
-  margin-bottom: 18px;
+.operator-operations-page .page-heading {
+  margin-bottom: 2rem;
 }
-.operations-page .work-card-heading h3 {
+
+
+.operator-operations-page .page-heading h1 {
   margin:
-    5px 0
-    6px;
+    0.55rem 0
+    0.65rem;
 
   color:
     var(--color-ink);
 
-  font-size: 16px;
+  font-size: 2.25rem;
+  font-weight: 800;
+
+  letter-spacing: -0.045em;
+
+  line-height: 1.1;
 }
-.operations-page .work-card-heading p {
-  max-width: 650px;
+
+
+.operator-operations-page .page-heading p {
+  max-width: 52rem;
 
   margin: 0;
 
   color:
     var(--color-muted);
 
-  font-size: 12px;
+  font-size: 0.9rem;
+
+  line-height: 1.65;
+}
+
+
+.operator-operations-page .eyebrow-text,
+.operator-operations-page .section-kicker {
+  color: #728d95;
+
+  font-size: 0.64rem;
+  font-weight: 800;
+
+  letter-spacing: 0.16em;
+
+  text-transform: uppercase;
+}
+
+
+/* ========================================
+   WORK GRID
+======================================== */
+
+.operator-operations-page .work-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  align-items: stretch;
+
+  gap: 1.25rem;
+
+  margin-bottom: 1.5rem;
+}
+
+
+/* ========================================
+   DAILY COUNT
+
+   Ocupa las dos columnas.
+======================================== */
+
+.operator-operations-page .daily-count-card {
+  grid-column:
+    1 / -1;
+}
+
+
+/* ========================================
+   WORK CARD
+======================================== */
+
+.operator-operations-page .work-card {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  border:
+    1px solid
+    #dfe8ea;
+
+  border-radius: 1rem;
+
+  background:
+    var(--color-surface);
+
+  padding: 1.75rem;
+
+  box-shadow:
+    0 4px 16px
+    rgba(22, 57, 70, 0.035);
+}
+
+
+/* ========================================
+   WORK CARD HEADER
+======================================== */
+
+.operator-operations-page
+.work-card-heading {
+  display: flex;
+
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 1rem;
+
+  margin-bottom: 1.6rem;
+}
+
+
+.operator-operations-page
+.work-card-heading > div {
+  min-width: 0;
+}
+
+
+.operator-operations-page
+.work-card-heading h3 {
+  margin:
+    0.55rem 0
+    0;
+
+  color:
+    var(--color-ink);
+
+  font-size: 1.2rem;
+  font-weight: 800;
+
+  letter-spacing: -0.025em;
+
+  line-height: 1.25;
+}
+
+
+.operator-operations-page
+.work-card-heading p {
+  max-width: 40rem;
+
+  margin:
+    0.5rem 0
+    0;
+
+  color:
+    var(--color-muted);
+
+  font-size: 0.78rem;
 
   line-height: 1.6;
 }
 
-.operations-page .work-grid {
+
+/* ========================================
+   WORK ICON
+======================================== */
+
+.operator-operations-page .work-icon {
   display: grid;
-  grid-template-columns: repeat(2,minmax(0,1fr));
-  gap: 17px;
-  margin-bottom: 20px;
-}
-.operations-page .work-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-.operations-page .work-icon {
-  display: grid;
-  width: 34px;
-  height: 34px;
-  flex: 0 0 34px;
+
+  width: 2.6rem;
+  height: 2.6rem;
+
+  flex:
+    0 0 2.6rem;
+
   place-items: center;
-  border: 1px solid #d9e7e8;
-  border-radius: 10px;
-  background: var(--color-brand-soft);
-  color: var(--color-brand);
-  font-size: 18px;
+
+  border:
+    1px solid
+    #d9e7e8;
+
+  border-radius: 0.7rem;
+
+  background:
+    var(--color-brand-soft);
+
+  color:
+    var(--color-brand);
 }
-.operations-page .operations-form-row {
+
+
+.operator-operations-page
+.work-icon svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+
+/* ========================================
+   WORK FORM
+======================================== */
+
+.operator-operations-page .work-form {
   display: flex;
-  gap: 13px;
-}
-.operations-page .operations-form-row label {
+
   flex: 1;
-}
-.operations-page .next-stop {
-  display: flex;
+
   flex-direction: column;
-  border: 1px solid #d5e3e5;
-  border-radius: 9px;
-  background: #f0f6f6;
-  padding: 15px;
+
+  gap: 1.15rem;
 }
-.operations-page .next-stop>span {
-  color: var(--color-muted);
-  font-size: 9px;
-  letter-spacing: 1px;
+
+
+/* ========================================
+   FORM LABELS
+======================================== */
+
+.operator-operations-page
+.work-form label {
+  gap: 0.5rem;
+
+  color: #294b57;
+
+  font-size: 0.8rem;
+  font-weight: 700;
 }
-.operations-page .next-stop strong {
-  margin: 4px 0;
-  color: var(--color-ink);
-  font-size: 16px;
+
+
+/* ========================================
+   FORM CONTROLS
+======================================== */
+
+.operator-operations-page
+.work-form input,
+
+.operator-operations-page
+.work-form select,
+
+.operator-operations-page
+.work-form textarea {
+  min-height: 3rem;
+
+  border-radius: 0.65rem;
+
+  padding:
+    0.7rem 0.85rem;
+
+  font-size: 0.8rem;
 }
-.operations-page .next-stop small,.operations-page .record-count {
-  color: var(--color-muted);
-  font-size: 10px;
+
+
+/* ========================================
+   FORM ROW
+======================================== */
+
+.operator-operations-page
+.operations-form-row {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 1rem;
 }
-.operations-page .existing-count {
-  border-radius: 7px;
-  background: #f0f6f6;
-  padding: 11px;
+
+
+.operator-operations-page
+.operations-form-row > * {
+  min-width: 0;
+}
+
+
+/* ========================================
+   NEXT STOP
+======================================== */
+
+.operator-operations-page .next-stop {
+  display: flex;
+
+  min-height: 5.4rem;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  border:
+    1px solid
+    #d5e3e5;
+
+  border-radius: 0.75rem;
+
+  background:
+    #f0f6f6;
+
+  padding:
+    1rem 1.1rem;
+}
+
+
+.operator-operations-page
+.next-stop > span {
+  color:
+    var(--color-muted);
+
+  font-size: 0.62rem;
+  font-weight: 700;
+
+  letter-spacing: 0.11em;
+
+  text-transform: uppercase;
+}
+
+
+.operator-operations-page
+.next-stop strong {
+  margin:
+    0.4rem 0
+    0;
+
+  color:
+    var(--color-ink);
+
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+
+.operator-operations-page
+.next-stop small {
+  margin-top: 0.25rem;
+
+  color:
+    var(--color-muted);
+
+  font-size: 0.7rem;
+}
+
+
+/* ========================================
+   BUTTONS
+======================================== */
+
+.operator-operations-page
+.work-form .button,
+
+.operator-operations-page
+.work-form .primary-button,
+
+.operator-operations-page
+.work-form .secondary-button {
+  width: 100%;
+
+  min-height: 3rem;
+
+  margin-top: 0.1rem;
+
+  border-radius: 0.65rem;
+
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+
+/* ========================================
+   EXISTING COUNT
+======================================== */
+
+.operator-operations-page
+.existing-count {
+  border:
+    1px solid
+    #dde8ea;
+
+  border-radius: 0.7rem;
+
+  background:
+    #f0f6f6;
+
+  padding:
+    0.9rem 1rem;
+
   color: #405c66;
-  font-size: 11px;
-  line-height: 1.5;
+
+  font-size: 0.76rem;
+
+  line-height: 1.55;
 }
-.operations-page .capacity-preview {
-  border-radius: 8px;
+
+
+/* ========================================
+   CAPACITY PREVIEW
+======================================== */
+
+.operator-operations-page
+.capacity-preview {
+  border:
+    1px solid
+    #e4ebed;
+
+  border-radius: 0.7rem;
+
   background: #f7fafb;
-  padding: 12px;
+
+  padding:
+    0.9rem 1rem;
+
   color: #49636b;
-  font-size: 11px;
+
+  font-size: 0.76rem;
+
+  line-height: 1.55;
 }
-.operations-page .capacity-preview p {
-  margin: 7px 0 0;
+
+
+.operator-operations-page
+.capacity-preview p {
+  margin:
+    0.45rem 0
+    0;
+
   color: #875d12;
-  font-size: 10px;
+
+  font-size: 0.7rem;
 }
-.operations-page .trip-list-card {
-  margin-top: 8px;
+
+
+/* ========================================
+   DAILY COUNT FORM
+======================================== */
+
+.operator-operations-page
+.daily-count-card .work-form {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  align-items: end;
+
+  gap:
+    1rem 1.25rem;
 }
-.operations-page .visit-timeline {
+
+
+/*
+   El botón ocupa la última columna.
+*/
+
+.operator-operations-page
+.daily-count-card .work-form > .button,
+
+.operator-operations-page
+.daily-count-card .work-form > .primary-button,
+
+.operator-operations-page
+.daily-count-card .work-form > .secondary-button {
+  grid-column: 3;
+}
+
+
+/* ========================================
+   RECENT TRIPS
+======================================== */
+
+.operator-operations-page
+.trip-list-card {
+  margin-top: 0;
+
+  padding: 1.75rem;
+}
+
+
+/* ========================================
+   TABLE TOOLS
+======================================== */
+
+.operator-operations-page
+.trip-list-card .table-tools {
   display: flex;
-  min-width: 210px;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 1rem;
+
+  margin-bottom: 1.25rem;
+}
+
+
+.operator-operations-page
+.trip-list-card .search-field {
+  width: 100%;
+  max-width: 25rem;
+}
+
+
+.operator-operations-page
+.trip-list-card .search-field input {
+  min-height: 3rem;
+
+  font-size: 0.8rem;
+}
+
+
+.operator-operations-page
+.record-count {
+  color:
+    var(--color-muted);
+
+  font-size: 0.74rem;
+
+  white-space: nowrap;
+}
+
+
+/* ========================================
+   VISIT TIMELINE
+======================================== */
+
+.operator-operations-page
+.visit-timeline {
+  display: flex;
+
+  min-width: 13rem;
+
   flex-direction: column;
-  gap: 10px;
-  margin: 12px 0;
+
+  gap: 0.65rem;
+
+  margin:
+    0.8rem 0;
+
   padding: 0;
+
   list-style: none;
 }
-.operations-page .visit-timeline li {
+
+
+.operator-operations-page
+.visit-timeline li {
   display: flex;
+
   flex-direction: column;
-  gap: 4px;
+
+  gap: 0.3rem;
 }
-.operations-page .visit-timeline li>strong {
-  color: var(--color-ink);
-  font-size: 11px;
+
+
+.operator-operations-page
+.visit-timeline li > strong {
+  color:
+    var(--color-ink);
+
+  font-size: 0.76rem;
 }
-.operations-page .visit-timeline li>span:not(.badge) {
-  color: var(--color-muted);
-  font-size: 10px;
+
+
+.operator-operations-page
+.visit-timeline li > span:not(.badge) {
+  color:
+    var(--color-muted);
+
+  font-size: 0.7rem;
 }
-.operations-page .visit-timeline .badge {
+
+
+.operator-operations-page
+.visit-timeline .badge {
   width: fit-content;
 }
-.operations-page .trip-list-card summary {
+
+
+/* ========================================
+   DETAILS
+======================================== */
+
+.operator-operations-page
+.trip-list-card summary {
   cursor: pointer;
-  color: var(--color-brand);
-  font-size: 10px;
-  font-weight: 600;
+
+  color:
+    var(--color-brand);
+
+  font-size: 0.72rem;
+  font-weight: 700;
 }
-@media(max-width:900px) {
-  .operations-page .work-grid {
+
+
+/* ========================================
+   TABLET
+======================================== */
+
+@media (max-width: 1000px) {
+
+  .operator-operations-page
+  .work-grid {
     grid-template-columns: 1fr;
   }
-}
-@media(max-width:560px) {
-  .operations-page .operations-form-row {
-    gap: 9px;
-  }
-  .operations-page .work-card-heading {
-    align-items: flex-start;
+
+
+  .operator-operations-page
+  .daily-count-card {
+    grid-column: auto;
   }
 
-  .operations-page .work-card {
-    padding: 17px;
+
+  .operator-operations-page
+  .daily-count-card .work-form {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+
+  .operator-operations-page
+  .daily-count-card
+  .work-form > .button,
+
+  .operator-operations-page
+  .daily-count-card
+  .work-form > .primary-button,
+
+  .operator-operations-page
+  .daily-count-card
+  .work-form > .secondary-button {
+    grid-column:
+      1 / -1;
+  }
+}
+
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 640px) {
+
+  .operator-operations-page
+  .page-heading {
+    margin-bottom:
+      1.5rem;
+  }
+
+
+  .operator-operations-page
+  .page-heading h1 {
+    font-size: 1.8rem;
+  }
+
+
+  .operator-operations-page
+  .page-heading p {
+    font-size: 0.8rem;
+  }
+
+
+  .operator-operations-page
+  .work-grid {
+    gap: 1rem;
+  }
+
+
+  .operator-operations-page
+  .work-card,
+
+  .operator-operations-page
+  .trip-list-card {
+    padding: 1.25rem;
+  }
+
+
+  .operator-operations-page
+  .work-card-heading {
+    align-items: flex-start;
+
+    margin-bottom: 1.25rem;
+  }
+
+
+  .operator-operations-page
+  .work-card-heading h3 {
+    font-size: 1.1rem;
+  }
+
+
+  .operator-operations-page
+  .operations-form-row {
+    grid-template-columns: 1fr;
+
+    gap: 0.9rem;
+  }
+
+
+  .operator-operations-page
+  .daily-count-card .work-form {
+    display: flex;
+
+    flex-direction: column;
+  }
+
+
+  .operator-operations-page
+  .trip-list-card .table-tools {
+    align-items: stretch;
+
+    flex-direction: column;
+  }
+
+
+  .operator-operations-page
+  .trip-list-card .search-field {
+    max-width: none;
+  }
+
+
+  .operator-operations-page
+  .record-count {
+    white-space: normal;
   }
 }

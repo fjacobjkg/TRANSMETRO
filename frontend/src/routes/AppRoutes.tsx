@@ -7,7 +7,6 @@ import {
 import { LoginPage } from "../pages/LoginPage";
 
 import { AppLayout } from "../layout/AppLayout";
-import { OperatorLayout } from "../layout/OperatorLayout";
 
 import { RoleRedirect } from "./RoleRedirect";
 import { ProtectedRoute } from "./ProtectedRoute";
@@ -194,34 +193,17 @@ export function AppRoutes() {
       </Route>
 
 
-     <Route
+   {/* =====================================
+    OPERADOR DE ESTACIÓN
+===================================== */}
+
+<Route
   element={
     <ProtectedRoute
       allowedRoles={["OPERADOR_ESTACION"]}
     />
   }
 >
-  {/* =====================================
-      DASHBOARD DEL OPERADOR
-      Layout nuevo y desacoplado
-  ====================================== */}
-
-  <Route
-    path="/operador/dashboard"
-    element={<OperatorLayout />}
-  >
-    <Route
-      index
-      element={<OperatorDashboardPage />}
-    />
-  </Route>
-
-
-  {/* =====================================
-      RESTO DEL MÓDULO OPERADOR
-      Mantiene el layout original
-  ====================================== */}
-
   <Route
     path="/operador"
     element={<AppLayout />}
@@ -230,15 +212,24 @@ export function AppRoutes() {
       index
       element={
         <Navigate
-          to="/operador/dashboard"
+          to="dashboard"
           replace
         />
       }
     />
 
     <Route
+      path="dashboard"
+      element={
+        <OperatorDashboardPage />
+      }
+    />
+
+    <Route
       path="operations"
-      element={<OperatorOperationsPage />}
+      element={
+        <OperatorOperationsPage />
+      }
     />
 
     <Route

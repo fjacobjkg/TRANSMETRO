@@ -1,9 +1,11 @@
 /* ========================================
-   OPERATOR OPERATIONS
+   OPERATIONS WORKSPACE
+   Compartido entre roles
 ======================================== */
 
-.operator-operations-page {
+.operations-page {
   width: 100%;
+  min-width: 0;
 }
 
 
@@ -11,12 +13,12 @@
    PAGE HEADER
 ======================================== */
 
-.operator-operations-page .page-heading {
+.operations-page .page-heading {
   margin-bottom: 2rem;
 }
 
 
-.operator-operations-page .page-heading h1 {
+.operations-page .page-heading h1 {
   margin:
     0.55rem 0
     0.65rem;
@@ -33,7 +35,7 @@
 }
 
 
-.operator-operations-page .page-heading p {
+.operations-page .page-heading p {
   max-width: 52rem;
 
   margin: 0;
@@ -41,14 +43,14 @@
   color:
     var(--color-muted);
 
-  font-size: 0.9rem;
+  font-size: 0.92rem;
 
   line-height: 1.65;
 }
 
 
-.operator-operations-page .eyebrow-text,
-.operator-operations-page .section-kicker {
+.operations-page .eyebrow-text,
+.operations-page .section-kicker {
   color: #728d95;
 
   font-size: 0.64rem;
@@ -64,7 +66,7 @@
    WORK GRID
 ======================================== */
 
-.operator-operations-page .work-grid {
+.operations-page .work-grid {
   display: grid;
 
   grid-template-columns:
@@ -79,22 +81,10 @@
 
 
 /* ========================================
-   DAILY COUNT
-
-   Ocupa las dos columnas.
-======================================== */
-
-.operator-operations-page .daily-count-card {
-  grid-column:
-    1 / -1;
-}
-
-
-/* ========================================
    WORK CARD
 ======================================== */
 
-.operator-operations-page .work-card {
+.operations-page .work-card {
   display: flex;
 
   min-width: 0;
@@ -119,11 +109,10 @@
 
 
 /* ========================================
-   WORK CARD HEADER
+   CARD HEADING
 ======================================== */
 
-.operator-operations-page
-.work-card-heading {
+.operations-page .work-card-heading {
   display: flex;
 
   align-items: flex-start;
@@ -135,13 +124,13 @@
 }
 
 
-.operator-operations-page
+.operations-page
 .work-card-heading > div {
   min-width: 0;
 }
 
 
-.operator-operations-page
+.operations-page
 .work-card-heading h3 {
   margin:
     0.55rem 0
@@ -159,7 +148,7 @@
 }
 
 
-.operator-operations-page
+.operations-page
 .work-card-heading p {
   max-width: 40rem;
 
@@ -180,7 +169,7 @@
    WORK ICON
 ======================================== */
 
-.operator-operations-page .work-icon {
+.operations-page .work-icon {
   display: grid;
 
   width: 2.6rem;
@@ -205,18 +194,17 @@
 }
 
 
-.operator-operations-page
-.work-icon svg {
+.operations-page .work-icon svg {
   width: 1.15rem;
   height: 1.15rem;
 }
 
 
 /* ========================================
-   WORK FORM
+   FORMS
 ======================================== */
 
-.operator-operations-page .work-form {
+.operations-page .work-form {
   display: flex;
 
   flex: 1;
@@ -227,11 +215,7 @@
 }
 
 
-/* ========================================
-   FORM LABELS
-======================================== */
-
-.operator-operations-page
+.operations-page
 .work-form label {
   gap: 0.5rem;
 
@@ -242,24 +226,21 @@
 }
 
 
-/* ========================================
-   FORM CONTROLS
-======================================== */
-
-.operator-operations-page
+.operations-page
 .work-form input,
 
-.operator-operations-page
+.operations-page
 .work-form select,
 
-.operator-operations-page
+.operations-page
 .work-form textarea {
   min-height: 3rem;
 
   border-radius: 0.65rem;
 
   padding:
-    0.7rem 0.85rem;
+    0.7rem
+    0.85rem;
 
   font-size: 0.8rem;
 }
@@ -269,7 +250,7 @@
    FORM ROW
 ======================================== */
 
-.operator-operations-page
+.operations-page
 .operations-form-row {
   display: grid;
 
@@ -280,7 +261,7 @@
 }
 
 
-.operator-operations-page
+.operations-page
 .operations-form-row > * {
   min-width: 0;
 }
@@ -290,7 +271,7 @@
    NEXT STOP
 ======================================== */
 
-.operator-operations-page .next-stop {
+.operations-page .next-stop {
   display: flex;
 
   min-height: 5.4rem;
@@ -313,7 +294,7 @@
 }
 
 
-.operator-operations-page
+.operations-page
 .next-stop > span {
   color:
     var(--color-muted);
@@ -327,7 +308,7 @@
 }
 
 
-.operator-operations-page
+.operations-page
 .next-stop strong {
   margin:
     0.4rem 0
@@ -341,7 +322,7 @@
 }
 
 
-.operator-operations-page
+.operations-page
 .next-stop small {
   margin-top: 0.25rem;
 
@@ -353,16 +334,16 @@
 
 
 /* ========================================
-   BUTTONS
+   FORM BUTTONS
 ======================================== */
 
-.operator-operations-page
+.operations-page
 .work-form .button,
 
-.operator-operations-page
+.operations-page
 .work-form .primary-button,
 
-.operator-operations-page
+.operations-page
 .work-form .secondary-button {
   width: 100%;
 
@@ -381,8 +362,7 @@
    EXISTING COUNT
 ======================================== */
 
-.operator-operations-page
-.existing-count {
+.operations-page .existing-count {
   border:
     1px solid
     #dde8ea;
@@ -407,8 +387,7 @@
    CAPACITY PREVIEW
 ======================================== */
 
-.operator-operations-page
-.capacity-preview {
+.operations-page .capacity-preview {
   border:
     1px solid
     #e4ebed;
@@ -428,7 +407,7 @@
 }
 
 
-.operator-operations-page
+.operations-page
 .capacity-preview p {
   margin:
     0.45rem 0
@@ -441,11 +420,27 @@
 
 
 /* ========================================
-   DAILY COUNT FORM
+   ACCESS COUNT CARD
 ======================================== */
 
-.operator-operations-page
-.daily-count-card .work-form {
+/*
+   Esta tarjeta solo existe para
+   OPERADOR_ESTACION.
+
+   Para aprovechar correctamente el
+   espacio debe recibir la clase
+   .access-count-card en AccessCountForm.
+*/
+
+.operations-page .access-count-card {
+  grid-column:
+    1 / -1;
+}
+
+
+.operations-page
+.access-count-card
+.work-form {
   display: grid;
 
   grid-template-columns:
@@ -458,28 +453,26 @@
 }
 
 
-/*
-   El botón ocupa la última columna.
-*/
+.operations-page
+.access-count-card
+.work-form > .button,
 
-.operator-operations-page
-.daily-count-card .work-form > .button,
+.operations-page
+.access-count-card
+.work-form > .primary-button,
 
-.operator-operations-page
-.daily-count-card .work-form > .primary-button,
-
-.operator-operations-page
-.daily-count-card .work-form > .secondary-button {
+.operations-page
+.access-count-card
+.work-form > .secondary-button {
   grid-column: 3;
 }
 
 
 /* ========================================
-   RECENT TRIPS
+   TRIPS TABLE CARD
 ======================================== */
 
-.operator-operations-page
-.trip-list-card {
+.operations-page .trip-list-card {
   margin-top: 0;
 
   padding: 1.75rem;
@@ -490,8 +483,9 @@
    TABLE TOOLS
 ======================================== */
 
-.operator-operations-page
-.trip-list-card .table-tools {
+.operations-page
+.trip-list-card
+.table-tools {
   display: flex;
 
   align-items: center;
@@ -503,23 +497,96 @@
 }
 
 
-.operator-operations-page
-.trip-list-card .search-field {
+/* ========================================
+   SEARCH FIELD
+======================================== */
+
+.operations-page
+.trip-list-card
+.search-field {
+  position: relative;
+
+  display: block;
+
   width: 100%;
   max-width: 25rem;
+
+  margin: 0;
+
+  font-size: 0;
 }
 
 
-.operator-operations-page
-.trip-list-card .search-field input {
+.operations-page
+.trip-list-card
+.search-field > span,
+
+.operations-page
+.trip-list-card
+.search-field > svg {
+  position: absolute;
+
+  top: 50%;
+  left: 1rem;
+
+  z-index: 2;
+
+  display: grid;
+
+  width: 1rem;
+  height: 1rem;
+
+  place-items: center;
+
+  margin: 0;
+
+  color: #718991;
+
+  font-size: 1rem;
+
+  pointer-events: none;
+
+  transform:
+    translateY(-50%);
+}
+
+
+.operations-page
+.trip-list-card
+.search-field > span svg {
+  display: block;
+
+  width: 1rem;
+  height: 1rem;
+}
+
+
+.operations-page
+.trip-list-card
+.search-field input {
+  width: 100%;
+
   min-height: 3rem;
+
+  margin: 0;
+
+  padding:
+    0.7rem
+    0.9rem
+    0.7rem
+    2.75rem;
+
+  border-radius: 0.7rem;
 
   font-size: 0.8rem;
 }
 
 
-.operator-operations-page
-.record-count {
+/* ========================================
+   RECORD COUNT
+======================================== */
+
+.operations-page .record-count {
   color:
     var(--color-muted);
 
@@ -533,8 +600,7 @@
    VISIT TIMELINE
 ======================================== */
 
-.operator-operations-page
-.visit-timeline {
+.operations-page .visit-timeline {
   display: flex;
 
   min-width: 13rem;
@@ -552,7 +618,7 @@
 }
 
 
-.operator-operations-page
+.operations-page
 .visit-timeline li {
   display: flex;
 
@@ -562,8 +628,9 @@
 }
 
 
-.operator-operations-page
-.visit-timeline li > strong {
+.operations-page
+.visit-timeline
+li > strong {
   color:
     var(--color-ink);
 
@@ -571,8 +638,9 @@
 }
 
 
-.operator-operations-page
-.visit-timeline li > span:not(.badge) {
+.operations-page
+.visit-timeline
+li > span:not(.badge) {
   color:
     var(--color-muted);
 
@@ -580,7 +648,7 @@
 }
 
 
-.operator-operations-page
+.operations-page
 .visit-timeline .badge {
   width: fit-content;
 }
@@ -590,7 +658,7 @@
    DETAILS
 ======================================== */
 
-.operator-operations-page
+.operations-page
 .trip-list-card summary {
   cursor: pointer;
 
@@ -608,35 +676,35 @@
 
 @media (max-width: 1000px) {
 
-  .operator-operations-page
-  .work-grid {
+  .operations-page .work-grid {
     grid-template-columns: 1fr;
   }
 
 
-  .operator-operations-page
-  .daily-count-card {
+  .operations-page
+  .access-count-card {
     grid-column: auto;
   }
 
 
-  .operator-operations-page
-  .daily-count-card .work-form {
+  .operations-page
+  .access-count-card
+  .work-form {
     grid-template-columns:
       repeat(2, minmax(0, 1fr));
   }
 
 
-  .operator-operations-page
-  .daily-count-card
+  .operations-page
+  .access-count-card
   .work-form > .button,
 
-  .operator-operations-page
-  .daily-count-card
+  .operations-page
+  .access-count-card
   .work-form > .primary-button,
 
-  .operator-operations-page
-  .daily-count-card
+  .operations-page
+  .access-count-card
   .work-form > .secondary-button {
     grid-column:
       1 / -1;
@@ -650,41 +718,36 @@
 
 @media (max-width: 640px) {
 
-  .operator-operations-page
+  .operations-page
   .page-heading {
-    margin-bottom:
-      1.5rem;
+    margin-bottom: 1.5rem;
   }
 
 
-  .operator-operations-page
+  .operations-page
   .page-heading h1 {
-    font-size: 1.8rem;
+    font-size: 1.75rem;
   }
 
 
-  .operator-operations-page
+  .operations-page
   .page-heading p {
-    font-size: 0.8rem;
+    font-size: 0.82rem;
   }
 
 
-  .operator-operations-page
-  .work-grid {
+  .operations-page .work-grid {
     gap: 1rem;
   }
 
 
-  .operator-operations-page
-  .work-card,
-
-  .operator-operations-page
-  .trip-list-card {
+  .operations-page .work-card,
+  .operations-page .trip-list-card {
     padding: 1.25rem;
   }
 
 
-  .operator-operations-page
+  .operations-page
   .work-card-heading {
     align-items: flex-start;
 
@@ -692,13 +755,13 @@
   }
 
 
-  .operator-operations-page
+  .operations-page
   .work-card-heading h3 {
     font-size: 1.1rem;
   }
 
 
-  .operator-operations-page
+  .operations-page
   .operations-form-row {
     grid-template-columns: 1fr;
 
@@ -706,29 +769,32 @@
   }
 
 
-  .operator-operations-page
-  .daily-count-card .work-form {
+  .operations-page
+  .access-count-card
+  .work-form {
     display: flex;
 
     flex-direction: column;
   }
 
 
-  .operator-operations-page
-  .trip-list-card .table-tools {
+  .operations-page
+  .trip-list-card
+  .table-tools {
     align-items: stretch;
 
     flex-direction: column;
   }
 
 
-  .operator-operations-page
-  .trip-list-card .search-field {
+  .operations-page
+  .trip-list-card
+  .search-field {
     max-width: none;
   }
 
 
-  .operator-operations-page
+  .operations-page
   .record-count {
     white-space: normal;
   }

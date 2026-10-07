@@ -1,63 +1,413 @@
-/* Dashboard exclusivo del administrador. */
+/* ========================================
+   ADMIN DASHBOARD
+======================================== */
+
+.admin-dashboard {
+  width: 100%;
+}
+
+
+/* ========================================
+   PAGE HEADER
+======================================== */
+
+.admin-dashboard .page-heading {
+  margin-bottom: 2rem;
+}
+
+
+.admin-dashboard .page-heading h1 {
+  margin:
+    0.55rem 0
+    0.65rem;
+
+  color:
+    var(--color-ink);
+
+  font-size: 2.25rem;
+  font-weight: 800;
+
+  letter-spacing: -0.045em;
+
+  line-height: 1.1;
+}
+
+
+.admin-dashboard .page-heading p {
+  max-width: 48rem;
+
+  margin: 0;
+
+  color:
+    var(--color-muted);
+
+  font-size: 0.92rem;
+
+  line-height: 1.65;
+}
+
+
+.admin-dashboard .eyebrow-text {
+  color: #728d95;
+
+  font-size: 0.65rem;
+  font-weight: 800;
+
+  letter-spacing: 0.16em;
+
+  text-transform: uppercase;
+}
+
+
+/* ========================================
+   KPI GRID
+======================================== */
+
 .admin-dashboard .metric-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
-  margin-bottom: 22px;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 1rem;
+
+  margin-bottom: 1.75rem;
 }
 
-.admin-dashboard .dashboard-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.8fr) minmax(260px, 1fr);
-  align-items: start;
-  gap: 20px;
-}
 
-.admin-dashboard .dashboard-side {
+/* ========================================
+   KPI CARD
+======================================== */
+
+.admin-dashboard .metric-card {
   display: flex;
+
+  min-width: 0;
+
   flex-direction: column;
-  gap: 16px;
+
+  gap: 0.65rem;
+
+  border:
+    1px solid
+    #dfe8ea;
+
+  border-radius: 0.9rem;
+
+  background: #ffffff;
+
+  padding:
+    1.55rem 1.6rem;
+
+  box-shadow:
+    0 4px 16px
+    rgba(22, 57, 70, 0.035);
 }
 
-.admin-dashboard .admin-control-card {
-  border-top: 3px solid var(--color-accent);
+
+.admin-dashboard .metric-card > span {
+  color: #5f7a83;
+
+  font-size: 0.78rem;
+  font-weight: 700;
 }
 
-.admin-dashboard .metric-card-emphasis {
-  border-bottom: 3px solid var(--color-brand);
+
+.admin-dashboard .metric-card > strong {
+  color:
+    var(--color-brand);
+
+  font-size: 2.15rem;
+  font-weight: 800;
+
+  letter-spacing: -0.05em;
+
+  line-height: 1.1;
 }
+
+
+.admin-dashboard .metric-card small {
+  color: #82979d;
+
+  font-size: 0.72rem;
+
+  line-height: 1.5;
+}
+
+
+/* KPI principal */
+
+.admin-dashboard
+.metric-card-emphasis {
+  border-bottom:
+    3px solid
+    var(--color-brand);
+}
+
+
+/* ========================================
+   MAIN DASHBOARD GRID
+======================================== */
+
+.admin-dashboard-grid {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.8fr)
+    minmax(280px, 0.85fr);
+
+  align-items: start;
+
+  gap: 1.4rem;
+}
+
+
+/* ========================================
+   NETWORK PANEL
+======================================== */
+
+.admin-dashboard .network-panel {
+  min-width: 0;
+}
+
+
+/*
+   Si NetworkPanel utiliza .panel,
+   modificamos solo el que vive dentro
+   del dashboard del administrador.
+*/
+
+.admin-dashboard
+.network-panel.panel,
+.admin-dashboard
+.network-panel .panel {
+  padding: 2rem;
+}
+
+
+/* Títulos internos de la red */
+
+.admin-dashboard
+.network-panel h2,
+.admin-dashboard
+.network-panel h3 {
+  color:
+    var(--color-ink);
+
+  font-weight: 800;
+
+  letter-spacing: -0.025em;
+}
+
+
+.admin-dashboard
+.network-panel h2 {
+  font-size: 1.4rem;
+}
+
+
+.admin-dashboard
+.network-panel h3 {
+  font-size: 1.15rem;
+}
+
+
+.admin-dashboard
+.network-panel p {
+  color:
+    var(--color-muted);
+
+  font-size: 0.8rem;
+
+  line-height: 1.65;
+}
+
+
+/* ========================================
+   DASHBOARD SIDE
+======================================== */
+
+.admin-dashboard-side {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  gap: 1rem;
+}
+
+
+/* ========================================
+   CONTROL AND TRACEABILITY
+======================================== */
+
+.admin-control-card {
+  border:
+    1px solid
+    #cfdee1;
+
+  border-top:
+    3px solid
+    var(--color-accent);
+
+  border-radius: 0.9rem;
+
+  background:
+    var(--color-brand-soft);
+
+  padding: 1.75rem;
+}
+
+
+.admin-control-card h3 {
+  margin:
+    0.8rem 0
+    0.7rem;
+
+  color:
+    var(--color-ink);
+
+  font-size: 1.15rem;
+  font-weight: 800;
+
+  letter-spacing: -0.02em;
+
+  line-height: 1.35;
+}
+
+
+.admin-control-card p {
+  margin:
+    0 0
+    1.25rem;
+
+  color: #49636b;
+
+  font-size: 0.82rem;
+
+  line-height: 1.65;
+}
+
+
+/* ========================================
+   AUDIT BUTTON
+======================================== */
+
+.admin-control-card .button {
+  min-height: 2.75rem;
+
+  padding:
+    0.65rem 1rem;
+
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+
+/* ========================================
+   TABLET / SMALL DESKTOP
+======================================== */
 
 @media (max-width: 1150px) {
-  .admin-dashboard .dashboard-grid {
+
+  .admin-dashboard-grid {
     grid-template-columns: 1fr;
   }
 
-  .admin-dashboard .dashboard-side {
-    display: grid;
-    grid-template-columns: 1.2fr 1fr;
+
+  .admin-dashboard-side {
+    display: block;
+  }
+
+
+  .admin-control-card {
+    width: 100%;
   }
 }
+
+
+/* ========================================
+   TABLET
+======================================== */
 
 @media (max-width: 900px) {
+
+  .admin-dashboard .page-heading h1 {
+    font-size: 2rem;
+  }
+
+
   .admin-dashboard .metric-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+
+  .admin-dashboard
+  .network-panel.panel,
+  .admin-dashboard
+  .network-panel .panel {
+    padding: 1.6rem;
   }
 }
 
-@media (max-width: 560px) {
-  .admin-dashboard .metric-grid {
-    gap: 9px;
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 640px) {
+
+  .admin-dashboard .page-heading {
+    margin-bottom: 1.5rem;
   }
+
+
+  .admin-dashboard .page-heading h1 {
+    font-size: 1.75rem;
+  }
+
+
+  .admin-dashboard .page-heading p {
+    font-size: 0.82rem;
+  }
+
+
+  .admin-dashboard .metric-grid {
+    grid-template-columns: 1fr;
+
+    gap: 0.75rem;
+
+    margin-bottom: 1.25rem;
+  }
+
 
   .admin-dashboard .metric-card {
-    padding: 14px;
+    padding: 1.25rem;
   }
 
-  .admin-dashboard .metric-card > strong {
-    font-size: 23px;
+
+  .admin-dashboard
+  .metric-card > strong {
+    font-size: 1.8rem;
   }
 
-  .admin-dashboard .dashboard-side {
-    display: flex;
+
+  .admin-dashboard
+  .network-panel.panel,
+  .admin-dashboard
+  .network-panel .panel {
+    padding: 1.3rem;
+  }
+
+
+  .admin-control-card {
+    padding: 1.35rem;
+  }
+
+
+  .admin-control-card h3 {
+    font-size: 1.05rem;
   }
 }

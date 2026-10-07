@@ -1,5 +1,19 @@
 import "../../styles/pages/admin/users.css";
-import { CatalogWorkspace } from "../../components/catalog/CatalogWorkspace";
+
+import {
+  CatalogWorkspace,
+} from "../../components/catalog/CatalogWorkspace";
+
+
 export function AdminUsersPage() {
-  return <div className="admin-page admin-users-page"><CatalogWorkspace section="users" /></div>;
+  return (
+    <div className="admin-page admin-users-page">
+
+      <CatalogWorkspace
+        section="users"
+        showRefreshAction={false}
+      />
+
+    </div>
+  );
 }

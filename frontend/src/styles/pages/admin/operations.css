@@ -1,3 +1,14 @@
+/* ========================================
+   ADMIN OPERATIONS
+======================================== */
+
 .admin-operations-page {
+  width: 100%;
   min-width: 0;
 }
+
+
+/*
+   Agregar aquí únicamente cambios
+   exclusivos de Administración.
+*/

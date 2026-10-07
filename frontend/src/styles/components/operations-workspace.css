@@ -1,0 +1,734 @@
+/* ========================================
+   OPERATIONS WORKSPACE
+   Compartido por Admin y Operador
+======================================== */
+
+.operations-page {
+  width: 100%;
+  min-width: 0;
+}
+
+
+/* ========================================
+   WORK GRID
+======================================== */
+
+.operations-page .work-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  align-items: stretch;
+
+  gap: 1.25rem;
+
+  margin-bottom: 1.5rem;
+}
+
+
+/* ========================================
+   DAILY COUNT CARD
+======================================== */
+
+.operations-page .daily-count-card {
+  grid-column:
+    1 / -1;
+}
+
+
+/* ========================================
+   WORK CARD
+======================================== */
+
+.operations-page .work-card {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  border:
+    1px solid
+    #dfe8ea;
+
+  border-radius: 1rem;
+
+  background:
+    var(--color-surface);
+
+  padding:
+    1.75rem;
+
+  box-shadow:
+    0 4px 16px
+    rgba(22, 57, 70, 0.035);
+}
+
+
+/* ========================================
+   CARD HEADER
+======================================== */
+
+.operations-page .work-card-heading {
+  display: flex;
+
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 1rem;
+
+  margin-bottom: 1.6rem;
+}
+
+
+.operations-page .work-card-heading > div {
+  min-width: 0;
+}
+
+
+.operations-page .work-card-heading h3 {
+  margin:
+    0.55rem 0
+    0;
+
+  color:
+    var(--color-ink);
+
+  font-size: 1.2rem;
+  font-weight: 800;
+
+  letter-spacing: -0.025em;
+
+  line-height: 1.25;
+}
+
+
+.operations-page .work-card-heading p {
+  max-width: 40rem;
+
+  margin:
+    0.5rem 0
+    0;
+
+  color:
+    var(--color-muted);
+
+  font-size: 0.78rem;
+
+  line-height: 1.6;
+}
+
+
+/* ========================================
+   EYEBROW
+======================================== */
+
+.operations-page .eyebrow-text,
+.operations-page .section-kicker {
+  color: #728d95;
+
+  font-size: 0.64rem;
+  font-weight: 800;
+
+  letter-spacing: 0.16em;
+
+  text-transform: uppercase;
+}
+
+
+/* ========================================
+   WORK ICON
+======================================== */
+
+.operations-page .work-icon {
+  display: grid;
+
+  width: 2.6rem;
+  height: 2.6rem;
+
+  flex:
+    0 0 2.6rem;
+
+  place-items: center;
+
+  border:
+    1px solid
+    #d9e7e8;
+
+  border-radius: 0.7rem;
+
+  background:
+    var(--color-brand-soft);
+
+  color:
+    var(--color-brand);
+}
+
+
+.operations-page .work-icon svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+
+/* ========================================
+   WORK FORM
+======================================== */
+
+.operations-page .work-form {
+  display: flex;
+
+  flex: 1;
+
+  flex-direction: column;
+
+  gap: 1.15rem;
+}
+
+
+/* ========================================
+   LABELS
+======================================== */
+
+.operations-page .work-form label {
+  gap: 0.5rem;
+
+  color: #294b57;
+
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+
+/* ========================================
+   CONTROLS
+======================================== */
+
+.operations-page .work-form input,
+.operations-page .work-form select,
+.operations-page .work-form textarea {
+  min-height: 3rem;
+
+  border-radius: 0.65rem;
+
+  padding:
+    0.7rem 0.85rem;
+
+  font-size: 0.8rem;
+}
+
+
+/* ========================================
+   FORM ROW
+======================================== */
+
+.operations-page .operations-form-row {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 1rem;
+}
+
+
+.operations-page .operations-form-row > * {
+  min-width: 0;
+}
+
+
+/* ========================================
+   NEXT STOP
+======================================== */
+
+.operations-page .next-stop {
+  display: flex;
+
+  min-height: 5.4rem;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  border:
+    1px solid
+    #d5e3e5;
+
+  border-radius: 0.75rem;
+
+  background:
+    #f0f6f6;
+
+  padding:
+    1rem 1.1rem;
+}
+
+
+.operations-page .next-stop > span {
+  color:
+    var(--color-muted);
+
+  font-size: 0.62rem;
+  font-weight: 700;
+
+  letter-spacing: 0.11em;
+
+  text-transform: uppercase;
+}
+
+
+.operations-page .next-stop strong {
+  margin:
+    0.4rem 0
+    0;
+
+  color:
+    var(--color-ink);
+
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+
+.operations-page .next-stop small {
+  margin-top: 0.25rem;
+
+  color:
+    var(--color-muted);
+
+  font-size: 0.7rem;
+}
+
+
+/* ========================================
+   BUTTONS
+======================================== */
+
+.operations-page .work-form .button,
+.operations-page .work-form .primary-button,
+.operations-page .work-form .secondary-button {
+  width: 100%;
+
+  min-height: 3rem;
+
+  margin-top: 0.1rem;
+
+  border-radius: 0.65rem;
+
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+
+/* ========================================
+   EXISTING COUNT
+======================================== */
+
+.operations-page .existing-count {
+  border:
+    1px solid
+    #dde8ea;
+
+  border-radius: 0.7rem;
+
+  background:
+    #f0f6f6;
+
+  padding:
+    0.9rem 1rem;
+
+  color: #405c66;
+
+  font-size: 0.76rem;
+
+  line-height: 1.55;
+}
+
+
+/* ========================================
+   CAPACITY PREVIEW
+======================================== */
+
+.operations-page .capacity-preview {
+  border:
+    1px solid
+    #e4ebed;
+
+  border-radius: 0.7rem;
+
+  background:
+    #f7fafb;
+
+  padding:
+    0.9rem 1rem;
+
+  color:
+    #49636b;
+
+  font-size: 0.76rem;
+
+  line-height: 1.55;
+}
+
+
+.operations-page .capacity-preview p {
+  margin:
+    0.45rem 0
+    0;
+
+  color:
+    #875d12;
+
+  font-size: 0.7rem;
+}
+
+
+/* ========================================
+   DAILY COUNT FORM
+======================================== */
+
+.operations-page
+.daily-count-card
+.work-form {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  align-items: end;
+
+  gap:
+    1rem 1.25rem;
+}
+
+
+.operations-page
+.daily-count-card
+.work-form > .button,
+
+.operations-page
+.daily-count-card
+.work-form > .primary-button,
+
+.operations-page
+.daily-count-card
+.work-form > .secondary-button {
+  grid-column: 3;
+}
+
+
+/* ========================================
+   RECENT TRIPS
+======================================== */
+
+.operations-page .trip-list-card {
+  margin-top: 0;
+
+  padding: 1.75rem;
+}
+
+
+/* ========================================
+   TABLE TOOLS
+======================================== */
+
+.operations-page
+.trip-list-card
+.table-tools {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 1rem;
+
+  margin-bottom: 1.25rem;
+}
+
+
+/* ========================================
+   SEARCH
+======================================== */
+
+.operations-page
+.trip-list-card
+.search-field {
+  position: relative;
+
+  display: block;
+
+  width: 100%;
+  max-width: 25rem;
+
+  margin: 0;
+
+  font-size: 0;
+}
+
+
+.operations-page
+.trip-list-card
+.search-field > span,
+
+.operations-page
+.trip-list-card
+.search-field > svg {
+  position: absolute;
+
+  top: 50%;
+  left: 1rem;
+
+  z-index: 2;
+
+  display: grid;
+
+  width: 1rem;
+  height: 1rem;
+
+  place-items: center;
+
+  margin: 0;
+
+  color:
+    #718991;
+
+  font-size: 1rem;
+
+  pointer-events: none;
+
+  transform:
+    translateY(-50%);
+}
+
+
+.operations-page
+.trip-list-card
+.search-field > span svg {
+  display: block;
+
+  width: 1rem;
+  height: 1rem;
+}
+
+
+.operations-page
+.trip-list-card
+.search-field input {
+  width: 100%;
+
+  min-height: 3rem;
+
+  margin: 0;
+
+  padding:
+    0.7rem
+    0.9rem
+    0.7rem
+    2.75rem;
+
+  border-radius: 0.7rem;
+
+  font-size: 0.8rem;
+}
+
+
+/* ========================================
+   RECORD COUNT
+======================================== */
+
+.operations-page .record-count {
+  color:
+    var(--color-muted);
+
+  font-size: 0.74rem;
+
+  white-space: nowrap;
+}
+
+
+/* ========================================
+   VISIT TIMELINE
+======================================== */
+
+.operations-page .visit-timeline {
+  display: flex;
+
+  min-width: 13rem;
+
+  flex-direction: column;
+
+  gap: 0.65rem;
+
+  margin:
+    0.8rem 0;
+
+  padding: 0;
+
+  list-style: none;
+}
+
+
+.operations-page .visit-timeline li {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0.3rem;
+}
+
+
+.operations-page
+.visit-timeline
+li > strong {
+  color:
+    var(--color-ink);
+
+  font-size: 0.76rem;
+}
+
+
+.operations-page
+.visit-timeline
+li > span:not(.badge) {
+  color:
+    var(--color-muted);
+
+  font-size: 0.7rem;
+}
+
+
+.operations-page
+.visit-timeline
+.badge {
+  width: fit-content;
+}
+
+
+/* ========================================
+   DETAILS
+======================================== */
+
+.operations-page
+.trip-list-card
+summary {
+  cursor: pointer;
+
+  color:
+    var(--color-brand);
+
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+
+/* ========================================
+   TABLET
+======================================== */
+
+@media (max-width: 1000px) {
+
+  .operations-page .work-grid {
+    grid-template-columns: 1fr;
+  }
+
+
+  .operations-page .daily-count-card {
+    grid-column: auto;
+  }
+
+
+  .operations-page
+  .daily-count-card
+  .work-form {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+
+  .operations-page
+  .daily-count-card
+  .work-form > .button,
+
+  .operations-page
+  .daily-count-card
+  .work-form > .primary-button,
+
+  .operations-page
+  .daily-count-card
+  .work-form > .secondary-button {
+    grid-column:
+      1 / -1;
+  }
+}
+
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 640px) {
+
+  .operations-page .work-grid {
+    gap: 1rem;
+  }
+
+
+  .operations-page .work-card,
+  .operations-page .trip-list-card {
+    padding: 1.25rem;
+  }
+
+
+  .operations-page
+  .work-card-heading {
+    align-items: flex-start;
+
+    margin-bottom: 1.25rem;
+  }
+
+
+  .operations-page
+  .work-card-heading h3 {
+    font-size: 1.1rem;
+  }
+
+
+  .operations-page
+  .operations-form-row {
+    grid-template-columns: 1fr;
+
+    gap: 0.9rem;
+  }
+
+
+  .operations-page
+  .daily-count-card
+  .work-form {
+    display: flex;
+
+    flex-direction: column;
+  }
+
+
+  .operations-page
+  .trip-list-card
+  .table-tools {
+    align-items: stretch;
+
+    flex-direction: column;
+  }
+
+
+  .operations-page
+  .trip-list-card
+  .search-field {
+    max-width: none;
+  }
+
+
+  .operations-page
+  .record-count {
+    white-space: normal;
+  }
+}

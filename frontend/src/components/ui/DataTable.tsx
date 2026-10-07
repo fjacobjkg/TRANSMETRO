@@ -345,47 +345,41 @@ export function DataTable({
       </div>
 
 
-      <div className="table-pagination">
+      {pages > 1 && (
+        <div className="table-pagination">
 
-        <span>
-          Página {currentPage} de {pages}
-        </span>
+          <span>
+            Página {currentPage} de {pages}
+          </span>
 
+          <div>
 
-        <div>
+            <button
+              type="button"
+              className="button quiet"
+              disabled={currentPage <= 1}
+              onClick={() =>
+                setPage(currentPage - 1)
+              }
+            >
+              Anterior
+            </button>
 
-          <button
-            className="button quiet"
-            disabled={
-              currentPage <= 1
-            }
-            onClick={() =>
-              setPage(
-                currentPage - 1,
-              )
-            }
-          >
-            Anterior
-          </button>
+            <button
+              type="button"
+              className="button quiet"
+              disabled={currentPage >= pages}
+              onClick={() =>
+                setPage(currentPage + 1)
+              }
+            >
+              Siguiente
+            </button>
 
-
-          <button
-            className="button quiet"
-            disabled={
-              currentPage >= pages
-            }
-            onClick={() =>
-              setPage(
-                currentPage + 1,
-              )
-            }
-          >
-            Siguiente
-          </button>
+          </div>
 
         </div>
-
-      </div>
+      )}
 
     </div>
   );

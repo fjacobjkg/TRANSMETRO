@@ -47,13 +47,15 @@ interface CatalogWorkspaceProps {
   section: string;
   showRefreshAction?: boolean;
   pageSize?: number;
+  consultationMode?: boolean;
 }
 
 
 export function CatalogWorkspace({
   section,
   showRefreshAction = true,
-   pageSize,
+  pageSize,
+  consultationMode = false,
 }: CatalogWorkspaceProps) {
   const workspace =
     useCatalogWorkspace(section);
@@ -109,6 +111,33 @@ export function CatalogWorkspace({
             : undefined
         }
       />
+
+
+      {consultationMode && (
+        <div
+          className="consultation-notice"
+          role="note"
+        >
+          <span
+            className="consultation-notice-icon"
+            aria-hidden="true"
+          >
+            !
+          </span>
+
+          <div>
+            <strong>
+              Modo de consulta
+            </strong>
+
+            <p>
+              Puedes consultar la información registrada,
+              pero este perfil no permite crear, editar ni
+              configurar registros.
+            </p>
+          </div>
+        </div>
+      )}
 
 
       <CatalogResourceTabs

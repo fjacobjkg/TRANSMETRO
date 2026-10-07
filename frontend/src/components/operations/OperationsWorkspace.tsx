@@ -1,6 +1,5 @@
-import "../../styles/operations.css";
-import { Button } from "../ui/Button";
 import { Notice, PageHeader } from "../ui/PageHeader";
+import "../../styles/pages/operations.css";
 import { useOperationsWorkspace } from "../../hooks/operations/useOperationsWorkspace";
 import { AccessCountForm } from "./AccessCountForm";
 import { CancelTripDialog } from "./CancelTripDialog";
@@ -9,10 +8,9 @@ import { TripsTable } from "./TripsTable";
 import { VisitForm } from "./VisitForm";
 export function OperationsWorkspace() {
   const workspace = useOperationsWorkspace();
-  return <section className="feature-page">
+  return <section className="feature-page operations-page">
     <PageHeader eyebrow="OPERACIÓN DE ESTACIONES" title="Recorridos y registros"
-      description="Registra cada recorrido y conserva el orden de estaciones, la demanda y las evaluaciones."
-      actions={<Button variant="secondary" disabled={workspace.busy} onClick={workspace.refresh}>Actualizar</Button>} />
+      description="Registra cada recorrido y conserva el orden de estaciones, la demanda y las evaluaciones." />
     <Notice error={workspace.error} message={workspace.message} />
     <div className="work-grid">
       <TripStartForm lines={workspace.lines} trips={workspace.trips} line={workspace.line}

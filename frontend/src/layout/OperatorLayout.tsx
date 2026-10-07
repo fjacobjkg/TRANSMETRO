@@ -4,7 +4,7 @@ import { Outlet } from "react-router-dom";
 import { useAppLayout } from "../hooks/layout/useAppLayout";
 import { Sidebar } from "./Sidebar";
 
-import "../styles/operator-layout.css";
+import "../styles/layout/operator-layout.css";
 
 
 export function OperatorLayout() {

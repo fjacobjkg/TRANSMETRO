@@ -10,7 +10,7 @@ import {
   PageHeader,
 } from "../../components/ui/PageHeader";
 
-import "../../styles/pages/operator.css";
+import "../../styles/pages/operator/dashboard.css";
 
 
 export function OperatorDashboardPage() {
@@ -78,7 +78,7 @@ export function OperatorDashboardPage() {
             Flujo de trabajo
           </h2>
 
-          <ol className="workflow-list">
+          <ol className="operator-workflow-list">
 
             <li>
               <span>

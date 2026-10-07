@@ -17,7 +17,7 @@ export function VisitForm({ trips, selectedTrip, activeTrip, nextStation, occupa
     </Select></label>
     <div className="next-stop"><span>SIGUIENTE ESTACIÓN</span><strong>{nextStation?.estacion.nombre ?? (activeTrip ? "Recorrido completo" : "—")}</strong>
       {nextStation && <small>{nextStation.estacion.codigo} · parada {nextStation.orden}</small>}</div>
-    <div className="form-row">
+    <div className="operations-form-row">
       <label>Ocupación<Input type="number" min="0" step="1" value={occupancy} onChange={(event) => onOccupancyChange(event.target.value)} required /></label>
       <label>Demanda<Input type="number" min="0" step="1" value={demand} onChange={(event) => onDemandChange(event.target.value)} required /></label>
     </div>

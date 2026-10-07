@@ -5,7 +5,7 @@ import { MetricGrid } from "../../components/dashboard/MetricGrid";
 import { NetworkPanel } from "../../components/dashboard/NetworkPanel";
 import { QuickActions } from "../../components/dashboard/QuickActions";
 import { Notice, PageHeader } from "../../components/ui/PageHeader";
-import "../../styles/pages/administrative.css";
+import "../../styles/pages/administrative/dashboard.css";
 
 export function AdministrativeDashboardPage() {
   const { user } = useAuth();
@@ -23,7 +23,7 @@ export function AdministrativeDashboardPage() {
     ]} />
     <div className="dashboard-grid"><NetworkPanel /><aside className="dashboard-side">
       <QuickActions role="ADMINISTRATIVO" />
-      <article className="help-card administrative-report-card"><span className="eyebrow-text">CONSULTAS Y EXPORTACIÓN</span>
+      <article className="help-card dashboard-help-card administrative-report-card"><span className="eyebrow-text">CONSULTAS Y EXPORTACIÓN</span>
         <h3>Información para tu seguimiento</h3><p>Filtra visitas, asignaciones y conteos por fecha. Exporta los resultados desde reportes.</p>
         <Link className="button secondary" to="/administrativo/reports">Abrir consultas</Link>
       </article>

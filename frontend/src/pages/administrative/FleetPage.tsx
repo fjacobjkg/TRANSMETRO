@@ -1,6 +1,5 @@
+import "../../styles/pages/administrative/fleet.css";
 import { CatalogWorkspace } from "../../components/catalog/CatalogWorkspace";
-import "../../styles/pages/administrative.css";
-
 export function AdministrativeFleetPage() {
-  return <div className="administrative-page"><CatalogWorkspace section="fleet" /></div>;
+  return <div className="administrative-page administrative-fleet-page"><CatalogWorkspace section="fleet" /></div>;
 }

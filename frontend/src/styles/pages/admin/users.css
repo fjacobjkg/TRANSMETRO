@@ -1,0 +1,4 @@
+/* Ajustes visuales propios de admin/users; raíz JSX: .admin-users-page. */
+.admin-users-page {
+  min-width: 0;
+}

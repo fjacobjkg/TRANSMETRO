@@ -1,0 +1,176 @@
+/* Presentación compartida de MetricGrid, QuickActions y tarjetas informativas. */
+/* ========================================
+   METRIC CARD
+======================================== */
+
+.metric-card {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  gap: 9px;
+
+  border:
+    1px solid
+    #dfe8ea;
+
+  border-radius: 12px;
+
+  background: #ffffff;
+
+  padding:
+    18px 19px;
+
+  box-shadow:
+    0 3px 14px
+    rgba(22, 57, 70, 0.025);
+}
+
+
+.metric-card > span {
+  color: #67818a;
+
+  font-size: 11px;
+  font-weight: 650;
+}
+
+
+.metric-card > strong {
+  color:
+    var(--color-brand);
+
+  font-size: 29px;
+  font-weight: 700;
+
+  letter-spacing: -0.9px;
+
+  line-height: 1.15;
+}
+
+
+.metric-card small {
+  color: #82979d;
+
+  font-size: 10px;
+
+  line-height: 1.5;
+}
+
+
+/* ========================================
+   QUICK ACTIONS
+======================================== */
+
+.dashboard-quick-actions {
+  display: flex;
+
+  flex-direction: column;
+
+  margin-top: 14px;
+}
+
+
+.dashboard-quick-actions a {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  border: 0;
+
+  border-bottom:
+    1px solid
+    #edf2f3;
+
+  background: #ffffff;
+
+  padding:
+    13px 2px;
+
+  color: #435f69;
+
+  text-align: left;
+  text-decoration: none;
+
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+
+.dashboard-quick-actions a > strong {
+  flex: 1;
+
+  font-size: 12px;
+}
+
+
+.dashboard-quick-action-icon {
+  display: grid;
+
+  width: 26px;
+  height: 26px;
+
+  flex:
+    0 0 26px;
+
+  place-items: center;
+
+  border-radius: 8px;
+
+  background: #edf3f3;
+
+  color:
+    var(--color-brand);
+}
+
+
+.dashboard-quick-actions a:hover {
+  color:
+    var(--color-brand);
+}
+
+
+/* ========================================
+   HELP CARD
+======================================== */
+
+.dashboard-help-card {
+  border:
+    1px solid
+    #cfdee1;
+
+  border-radius: 12px;
+
+  background:
+    var(--color-brand-soft);
+
+  padding: 22px;
+}
+
+
+.dashboard-help-card h3 {
+  margin:
+    10px 0;
+
+  color:
+    var(--color-ink);
+
+  font-size: 15px;
+}
+
+
+.dashboard-help-card p {
+  margin: 0;
+
+  color:
+    var(--color-text);
+
+  font-size: 12px;
+
+  line-height: 1.6;
+}
+

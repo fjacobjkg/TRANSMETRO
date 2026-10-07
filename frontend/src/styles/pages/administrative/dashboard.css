@@ -1,0 +1,63 @@
+/* Dashboard exclusivo del personal administrativo. */
+.administrative-dashboard .metric-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.administrative-dashboard .dashboard-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.8fr) minmax(260px, 1fr);
+  align-items: start;
+  gap: 20px;
+}
+
+.administrative-dashboard .dashboard-side {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.administrative-dashboard .administrative-report-card {
+  border-left: 3px solid var(--color-brand);
+}
+
+.administrative-dashboard .metric-card {
+  background: linear-gradient(135deg, var(--color-surface), var(--color-brand-soft));
+}
+
+@media (max-width: 1150px) {
+  .administrative-dashboard .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .administrative-dashboard .dashboard-side {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .administrative-dashboard .metric-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .administrative-dashboard .metric-grid {
+    gap: 9px;
+  }
+
+  .administrative-dashboard .metric-card {
+    padding: 14px;
+  }
+
+  .administrative-dashboard .metric-card > strong {
+    font-size: 23px;
+  }
+
+  .administrative-dashboard .dashboard-side {
+    display: flex;
+  }
+}

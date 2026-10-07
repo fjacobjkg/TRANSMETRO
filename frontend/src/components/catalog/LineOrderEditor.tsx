@@ -4,7 +4,7 @@ import { useLineOrderEditor } from "../../hooks/catalog/useLineOrderEditor";
 
 export function LineOrderEditor({ onSaved }: { onSaved: () => void }) {
   const { stations, lines, lineId, stops, setStops, error, message, busy, selectLine, update, move, submit } = useLineOrderEditor(onSaved);
-  return <form className="line-editor" onSubmit={submit}>
+  return <form className="line-order-editor" onSubmit={submit}>
     <Notice error={error} message={message} />
     <label>Línea<select required value={lineId} onChange={(event) => selectLine(event.target.value)}>
       <option value="">Selecciona la línea que quieres configurar</option>

@@ -1,6 +1,5 @@
+import "../../styles/pages/admin/reports.css";
 import { ReportsWorkspace } from "../../components/reports/ReportsWorkspace";
-import "../../styles/pages/admin.css";
-
 export function AdminReportsPage() {
-  return <div className="admin-page"><ReportsWorkspace /></div>;
+  return <div className="admin-page admin-reports-page"><ReportsWorkspace /></div>;
 }

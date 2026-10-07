@@ -1,0 +1,4 @@
+/* Ajustes visuales propios de administrative/fleet; raíz JSX: .administrative-fleet-page. */
+.administrative-fleet-page {
+  min-width: 0;
+}

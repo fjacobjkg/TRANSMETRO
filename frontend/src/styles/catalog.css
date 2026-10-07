@@ -1,4 +1,10 @@
-.stop-editor {
+.catalog-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-block: 18px;
+}
+.line-order-editor .stop-editor {
   display: grid;
   grid-template-columns: 30px minmax(140px,1.5fr) minmax(120px,1fr) auto;
   align-items: center;
@@ -8,7 +14,7 @@
   background: #f7fafb;
   padding: 14px;
 }
-.stop-number {
+.line-order-editor .stop-number {
   display: grid;
   width: 28px;
   height: 28px;
@@ -19,33 +25,34 @@
   font-size: 11px;
   font-weight: 700;
 }
-.editor-intro {
+.line-order-editor .editor-intro {
   margin-top: 22px;
   font-size: 13px;
 }
-.editor-intro p {
+.line-order-editor .editor-intro p {
   margin: 5px 0;
   font-size: 12px;
 }
-.read-only-note {
+.line-order-editor .read-only-note {
   margin-top: 18px;
   color: #81949a;
   font-size: 10px;
 }
 @media(max-width:1100px) {
-  .stop-editor {
+  .line-order-editor .stop-editor {
     grid-template-columns: 30px 1fr 1fr;
   }
-  .stop-editor .row-actions {
+  .line-order-editor .stop-editor .row-actions {
     grid-column: 2/-1;
   }
 }
 @media(max-width:560px) {
-  .stop-editor {
+  .catalog-form-grid { grid-template-columns: 1fr; }
+  .line-order-editor .stop-editor {
     grid-template-columns: 28px 1fr;
     gap: 9px;
   }
-  .stop-editor>label,.stop-editor .row-actions,.stop-editor .muted {
+  .line-order-editor .stop-editor>label,.line-order-editor .stop-editor .row-actions,.line-order-editor .stop-editor .muted {
     grid-column: 2;
   }
 }

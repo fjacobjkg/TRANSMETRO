@@ -1,6 +1,0 @@
-.administrative-dashboard .administrative-report-card  {
-  border-left: 3px solid var(--color-brand);
-}
-.administrative-dashboard .metric-card  {
-  background: linear-gradient(135deg, var(--color-surface), var(--color-brand-soft));
-}

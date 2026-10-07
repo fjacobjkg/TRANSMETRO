@@ -225,8 +225,7 @@
    PANELS
 ======================================== */
 
-.panel,
-.work-card {
+.panel {
   border:
     1px solid
     #dfe8ea;
@@ -244,8 +243,7 @@
 }
 
 
-.panel-heading,
-.work-card-heading {
+.panel-heading {
   display: flex;
 
   align-items: center;
@@ -257,9 +255,7 @@
 }
 
 
-.panel-heading h2,
-.work-card-heading h3 {
-  margin:
+.panel-heading h2 {margin:
     5px 0
     6px;
 
@@ -270,9 +266,7 @@
 }
 
 
-.panel-heading p,
-.work-card-heading p {
-  max-width: 650px;
+.panel-heading p {max-width: 650px;
 
   margin: 0;
 
@@ -694,16 +688,7 @@
    FORMS
 ======================================== */
 
-.form-grid {
-  display: grid;
 
-  grid-template-columns:
-    repeat(2, minmax(0, 1fr));
-
-  gap: 16px;
-
-  margin-block: 18px;
-}
 
 
 .form-footer {
@@ -823,8 +808,7 @@
   }
 
 
-  .panel,
-  .work-card {
+  .panel {
     padding: 17px;
   }
 
@@ -838,11 +822,6 @@
     padding: 8px;
 
     font-size: 10px;
-  }
-
-
-  .form-grid {
-    grid-template-columns: 1fr;
   }
 
 

@@ -20,7 +20,7 @@ export function ReportsWorkspace() {
     ↓ Exportar CSV
   </Button>;
 
-  return <section className="feature-page">
+  return <section className="feature-page reports-page">
     <PageHeader eyebrow="INFORMACIÓN PARA DECIDIR" title="Consultas y reportes"
       description="Filtra la información operativa y exporta los resultados que estás consultando."
       actions={actions} />

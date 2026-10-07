@@ -1,3 +1,4 @@
+import "../styles/network.css";
 import { useNetworkLines } from "../hooks/dashboard/useNetworkLines";
 
 export function LineVisualization() {

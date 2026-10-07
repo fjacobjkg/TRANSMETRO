@@ -48,7 +48,7 @@ export function CatalogResourceForm({ resource, fields, values, lookups, error, 
     <form onSubmit={onSubmit}>
       <Notice error={error} />
       <p className="muted">{resource.description}</p>
-      <div className="form-grid">{fields.map((field) => <label key={field.name}>
+      <div className="catalog-form-grid">{fields.map((field) => <label key={field.name}>
         <FieldLabel required={field.required}>{relations[field.name]?.label ?? field.label}</FieldLabel>{control(field)}
       </label>)}</div>
       {resource.key === "users" && <p className="muted">La contraseña necesita 12 caracteres como mínimo, con mayúscula, minúscula y número.</p>}

@@ -5,7 +5,7 @@ import { MetricGrid } from "../../components/dashboard/MetricGrid";
 import { NetworkPanel } from "../../components/dashboard/NetworkPanel";
 import { QuickActions } from "../../components/dashboard/QuickActions";
 import { Notice, PageHeader } from "../../components/ui/PageHeader";
-import "../../styles/pages/admin.css";
+import "../../styles/pages/admin/dashboard.css";
 
 export function AdminDashboardPage() {
   const { user } = useAuth();
@@ -16,14 +16,14 @@ export function AdminDashboardPage() {
       actions={<Link className="button primary" to="/admin/users">Gestionar cuentas →</Link>} />
     <Notice error={error} />
     <MetricGrid loading={loading} metrics={[
-      { title: "Líneas", value: overview?.lines, note: "Red de transporte" },
+      { title: "Líneas", value: overview?.lines, note: "Red de transporte", emphasis: true },
       { title: "Estaciones", value: overview?.stations, note: "Puntos de la red" },
       { title: "Unidades", value: overview?.buses, note: "Flota registrada" },
       { title: "Recorridos abiertos", value: overview?.openTrips, note: "Seguimiento en curso" },
     ]} />
     <div className="dashboard-grid"><NetworkPanel /><aside className="dashboard-side">
       <QuickActions role="ADMIN" />
-      <article className="help-card admin-control-card"><span className="eyebrow-text">CONTROL Y TRAZABILIDAD</span>
+      <article className="help-card dashboard-help-card admin-control-card"><span className="eyebrow-text">CONTROL Y TRAZABILIDAD</span>
         <h3>Revisa los cambios del sistema</h3><p>Consulta responsables y fechas de los registros administrativos.</p>
         <Link className="button secondary" to="/admin/audit">Abrir bitácora</Link>
       </article>

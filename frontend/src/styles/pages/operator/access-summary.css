@@ -1,0 +1,19 @@
+/* Access summary uses the same approved form and table surfaces. */
+.operator-access-counts-page { width: 100%; max-width: none; min-width: 0; }
+.operator-access-counts-page .trip-access-summary-card { width: 100%; max-width: none; margin-top: 0; height: auto; }
+.operator-access-counts-page .work-form { flex: none; gap: 1rem; }
+.operator-access-counts-page .access-summary-controls { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 1rem; }
+.operator-access-counts-page .access-summary-controls label { min-width: 0; }
+.operator-access-counts-page .access-summary-controls .button { width: auto; margin: 0; }
+.operator-access-counts-page .access-summary-total { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.operator-access-counts-page .access-summary-total > div { display: grid; gap: 0.35rem; }
+.operator-access-counts-page .access-summary-total span { color: var(--color-muted); font-size: 0.78rem; }
+@media (max-width: 1000px) {
+  .operator-access-counts-page .visit-summary-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .operator-access-counts-page .access-summary-controls,
+  .operator-access-counts-page .access-summary-total,
+  .operator-access-counts-page .visit-summary-metrics { grid-template-columns: 1fr; }
+  .operator-access-counts-page .access-summary-controls .button { width: 100%; justify-self: stretch; }
+}

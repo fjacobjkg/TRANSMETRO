@@ -7,7 +7,7 @@ const prefixes: Record<UserRole, string> = {
 const items: Record<string, string> = {
   home: "Inicio", users: "Cuentas y roles", transport: "Red de transporte",
   personnel: "Personal y seguridad", fleet: "Flota y parqueos",
-  operations: "Operación", reports: "Consultas y reportes", audit: "Bitácora", "access-counts": "Conteo de accesos",
+  operations: "Operación", reports: "Consultas y reportes", audit: "Bitácora", "access-counts": "Resumen de accesos",
 };
 const modules: Record<UserRole, string[]> = {
   ADMIN: ["home", "users", "transport", "personnel", "fleet", "operations", "reports", "audit"],

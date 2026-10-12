@@ -64,28 +64,7 @@
 }
 
 
-/* ========================================
-   RESOURCE TABS
-======================================== */
-
-.admin-users-page
-.resource-tabs {
-  gap: 0.55rem;
-
-  margin-bottom: 1.25rem;
-}
-
-
-.admin-users-page
-.resource-tabs button {
-  min-height: 2.65rem;
-
-  padding:
-    0.65rem 0.9rem;
-
-  font-size: 0.78rem;
-  font-weight: 650;
-}
+/* Navigation dimensions are shared in components/resource-tabs.css. */
 
 
 /* ========================================
@@ -243,8 +222,6 @@
 }
 
 
-
-
 /* ========================================
    TABLET
 ======================================== */
@@ -288,12 +265,7 @@
   }
 
 
-  .admin-users-page
-  .resource-tabs button {
-    min-height: 2.5rem;
-
-    font-size: 0.74rem;
-  }
+  
 
 
   .admin-users-page

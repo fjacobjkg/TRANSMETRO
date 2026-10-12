@@ -1,4 +1,5 @@
 import {
+  Fragment,
   useEffect,
   useMemo,
   useState,
@@ -58,6 +59,8 @@ interface DataTableProps {
   ) => ReactNode;
 
   loading?: boolean;
+  showSearch?: boolean;
+  renderExpandedRow?: (row: Row) => ReactNode;
 
   pageSize?: number;
 }
@@ -69,6 +72,8 @@ export function DataTable({
   actions,
   loading = false,
   pageSize = 10,
+  renderExpandedRow,
+  showSearch = true,
 }: DataTableProps) {
   const [
     query,
@@ -105,7 +110,7 @@ export function DataTable({
                 "es",
               )
               .includes(
-                query.toLocaleLowerCase(
+                (showSearch ? query : "").toLocaleLowerCase(
                   "es",
                 ),
               ),
@@ -138,6 +143,7 @@ export function DataTable({
       rows,
       columns,
       query,
+      showSearch,
       sort,
     ]);
 
@@ -190,7 +196,7 @@ export function DataTable({
 
       <div className="table-tools">
 
-        <label className="search-field">
+        {showSearch && <label className="search-field">
 
           <span aria-hidden="true">
             ⌕
@@ -207,7 +213,7 @@ export function DataTable({
             }
           />
 
-        </label>
+        </label>}
 
 
         <span className="muted">
@@ -271,53 +277,21 @@ export function DataTable({
 
           <tbody>
 
-            {paginatedRows.map(
-              (row, index) => (
-                <tr
-                  key={String(
-                    row.id ??
-                      Object.entries(
-                        row,
-                      ).find(
-                        ([key]) =>
-                          key.startsWith(
-                            "id_",
-                          ),
-                      )?.[1] ??
-                      index,
-                  )}
-                >
-
-                  {columns.map(
-                    (col) => (
-                      <td key={col.key}>
-                        {col.render
-                          ? col.render(
-                              row,
-                            )
-                          : textValue(
-                              row[
-                                col.key
-                              ],
-                            )}
-                      </td>
-                    ),
-                  )}
-
-
-                  {actions && (
-                    <td>
-                      <div className="row-actions">
-                        {actions(
-                          row,
-                        )}
-                      </div>
-                    </td>
-                  )}
-
+            {paginatedRows.map((row, index) => {
+              const key = String(row.id ?? Object.entries(row).find(([name]) => name.startsWith("id_"))?.[1] ?? index);
+              const expanded = renderExpandedRow?.(row);
+              return <Fragment key={key}>
+                <tr>
+                  {columns.map(col => <td key={col.key}>
+                    {col.render ? col.render(row) : textValue(row[col.key])}
+                  </td>)}
+                  {actions && <td><div className="row-actions">{actions(row)}</div></td>}
                 </tr>
-              ),
-            )}
+                {expanded != null && <tr className="data-table-expanded-row">
+                  <td colSpan={columns.length + (actions ? 1 : 0)}>{expanded}</td>
+                </tr>}
+              </Fragment>;
+            })}
 
           </tbody>
 

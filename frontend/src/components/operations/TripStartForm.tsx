@@ -7,14 +7,14 @@ export function TripStartForm({ lines, trips, line, selectedLine, selectedBus, b
   lines: Line[]; trips: Trip[]; line?: Line; selectedLine: string; selectedBus: string; busy: boolean;
   onLineChange: (value: string) => void; onBusChange: (value: string) => void; onSubmit: (event: FormEvent<HTMLFormElement>) => void;
 }) {
-  return <OperationCard eyebrow="NUEVO RECORRIDO" title="Iniciar operación" icon="↗"><form className="work-form" onSubmit={onSubmit}>
+  return <OperationCard eyebrow="NUEVO RECORRIDO" title="Iniciar recorrido" description="Selecciona la línea y una unidad disponible para comenzar." icon="↗" className="trip-start-card"><form className="work-form" onSubmit={onSubmit}>
     <label>Línea<Select value={selectedLine} onChange={(event) => onLineChange(event.target.value)} required placeholder="Selecciona una línea">
       {lines.map((item) => <option key={item.id_linea} value={item.id_linea}>{item.codigo} · {item.nombre}</option>)}
     </Select></label>
-    <label>Bus asignado<Select value={selectedBus} onChange={(event) => onBusChange(event.target.value)} required placeholder="Selecciona un bus">
+    <label>Bus disponible<Select value={selectedBus} onChange={(event) => onBusChange(event.target.value)} required placeholder="Selecciona un bus">
       {line?.asignaciones_bus.map(({ bus }) => {
         const inTrip = trips.some((trip) => trip.estado === "EN_CURSO" && trip.bus.id_bus === bus.id_bus);
-        return <option disabled={inTrip} key={bus.id_bus} value={bus.id_bus}>{bus.codigo} · {bus.capacidad_maxima} plazas{inTrip ? " · En recorrido" : ""}</option>;
+        return <option disabled={inTrip} key={bus.id_bus} value={bus.id_bus}>{bus.codigo} · {bus.capacidad_maxima} pasajeros{inTrip ? " · En recorrido" : ""}</option>;
       })}
     </Select></label>
     <Button variant="primary" type="submit" disabled={busy || !line || !selectedBus}>{busy ? "Guardando…" : "Iniciar recorrido"}</Button>

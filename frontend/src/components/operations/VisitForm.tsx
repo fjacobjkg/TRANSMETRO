@@ -5,8 +5,10 @@ import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
 import { Select } from "../ui/Select";
 import { OperationCard } from "./OperationCard";
+import { VisitEvaluationPanel } from "./VisitEvaluationPanel";
 
 interface VisitFormProps {
+  separateEvaluation?: boolean;
   trips: Trip[];
   selectedTrip: string;
   activeTrip?: Trip;
@@ -24,14 +26,15 @@ interface VisitFormProps {
 }
 
 export function VisitForm({ trips, selectedTrip, activeTrip, nextStation, peopleOff, peopleBoarding,
-  demand, busy, canRecordNext, onTripChange, onPeopleOffChange, onPeopleBoardingChange, onDemandChange, onSubmit }: VisitFormProps) {
+  demand, busy, canRecordNext, onTripChange, onPeopleOffChange, onPeopleBoardingChange, onDemandChange, onSubmit,
+  separateEvaluation = false }: VisitFormProps) {
   const capacity = activeTrip?.bus.capacidad_maxima ?? 0;
   const arriving = arrivingPeople(activeTrip?.visitas ?? []);
   const preview = previewVisit(capacity, arriving, peopleOff, peopleBoarding, demand);
   const canEvaluate = Boolean(activeTrip && nextStation && preview.ready);
 
-  return (
-    <OperationCard eyebrow="VISITA" title="Registrar estación" icon="◔">
+  const form = (
+    <OperationCard eyebrow="VISITA" title="Registrar visita" description="Registra el movimiento de pasajeros cuando la unidad llega a tu estación." icon="◔" className="visit-form-card">
       <form className="work-form" onSubmit={onSubmit}>
         <label>
           Recorrido activo
@@ -54,9 +57,9 @@ export function VisitForm({ trips, selectedTrip, activeTrip, nextStation, people
         </div>
 
         <div className="visit-summary-box">
-          <span className="section-kicker">Personas que llegan en el bus</span>
+          <span className="section-kicker">Personas a bordo al llegar</span>
           <strong>{activeTrip ? `${arriving} personas` : "Selecciona un recorrido"}</strong>
-          <small className="field-help">Valor automático obtenido de la última visita guardada; en la primera estación llegan 0 personas.</small>
+          <small className="field-help">{activeTrip?.visitas.length ? "Este valor proviene de la visita anterior." : "El recorrido inicia con 0 personas a bordo."}</small>
         </div>
 
         <div className="operations-form-row">
@@ -66,7 +69,7 @@ export function VisitForm({ trips, selectedTrip, activeTrip, nextStation, people
               disabled={busy} onChange={event => onPeopleOffChange(event.target.value)} />
           </label>
           <label>
-            Personas esperando en la estación
+            Personas esperando
             <Input type="number" min="0" max="4294967295" step="1" required value={demand}
               disabled={busy} onChange={event => onDemandChange(event.target.value)} />
           </label>
@@ -83,41 +86,35 @@ export function VisitForm({ trips, selectedTrip, activeTrip, nextStation, people
             <strong>Selecciona un recorrido</strong>
             <p>Elige la unidad que llegó a tu estación para registrar la visita.</p>
           </div> : !canEvaluate || !preview.ready ? <div className="visit-summary-empty">
-            <strong>Capacidad del bus: {capacity} personas</strong>
+            <strong>Capacidad del bus: {capacity} pasajeros</strong>
             <p>{preview.error || "Ingresa cuántas personas bajan, esperan y abordan para realizar la evaluación."}</p>
           </div> : <>
             <span className="section-kicker">RESUMEN DE LA VISITA</span>
             <div className="visit-summary-metrics">
-              <div><span>Capacidad del bus</span><strong>{capacity} personas</strong></div>
-              <div><span>Llegan</span><strong>{arriving}</strong></div>
+              <div><span>Capacidad</span><strong>{capacity} pasajeros</strong></div>
+              <div><span>A bordo al llegar</span><strong>{arriving}</strong></div>
               <div><span>Bajan</span><strong>{preview.peopleOff}</strong></div>
               <div><span>Abordan</span><strong>{preview.peopleBoarding}</strong></div>
-              <div><span>Ocupación al continuar</span><strong>{preview.occupancy} / {capacity} personas</strong></div>
-              <div><span>Personas esperando</span><strong>{preview.waiting}</strong></div>
+              <div><span>Personas a bordo al salir</span><strong>{preview.occupancy} / {capacity}</strong></div>
+              <div><span>En espera</span><strong>{preview.waiting}</strong></div>
             </div>
-            <div className="visit-evaluation">
-              <span className="section-kicker">RESULTADO AUTOMÁTICO</span>
-              <p className="field-help">Vista previa. El sistema confirma el resultado al guardar la visita.</p>
-              <div className={`evaluation-item evaluation-item--${preview.requiresSupportUnit ? "warning" : "normal"}`}>
-                <strong>{preview.requiresSupportUnit ? "Se requiere apoyo de otra unidad" : "No se requiere unidad de apoyo"}</strong>
-                <p>{preview.requiresSupportUnit
-                  ? "La cantidad de personas esperando alcanzó el nivel definido para generar una alerta de unidad adicional."
-                  : "La cantidad de personas esperando permite continuar con la operación normal."}</p>
-              </div>
-              <div className={`evaluation-item evaluation-item--${preview.requiresExtraWait ? "warning" : "normal"}`}>
-                <strong>{preview.requiresExtraWait ? "Se agregarán 5 minutos de espera" : "El recorrido puede continuar normalmente"}</strong>
-                <p>{preview.requiresExtraWait
-                  ? "La unidad lleva pocas personas, por lo que se registrará tiempo adicional antes de continuar."
-                  : "La cantidad de personas dentro del bus no requiere tiempo adicional."}</p>
-              </div>
-            </div>
+            {!separateEvaluation && <VisitEvaluationPanel embedded canEvaluate={canEvaluate}
+              requiresSupportUnit={preview.requiresSupportUnit} requiresExtraWait={preview.requiresExtraWait} />}
           </>}
         </div>
         {activeTrip && nextStation && !canRecordNext && <p className="field-help">Esta estación no está incluida en tus asignaciones.</p>}
         <Button variant="primary" type="submit" disabled={busy || !canRecordNext || !canEvaluate}>
-          {busy ? "Guardando..." : "Guardar registro de estación"}
+          {busy ? "Guardando..." : "Registrar visita"}
         </Button>
       </form>
     </OperationCard>
   );
+
+  if (!separateEvaluation) return form;
+  return <div className="visit-workspace">
+    {form}
+    <VisitEvaluationPanel canEvaluate={canEvaluate}
+      requiresSupportUnit={preview.ready ? preview.requiresSupportUnit : false}
+      requiresExtraWait={preview.ready ? preview.requiresExtraWait : false} />
+  </div>;
 }

@@ -1,4 +1,6 @@
 import { Notice, PageHeader } from "../ui/PageHeader";
+import { useState } from "react";
+import { CatalogResourceTabs } from "../catalog/CatalogResourceTabs";
 
 import "../../styles/pages/operations.css";
 
@@ -26,6 +28,13 @@ import {
 export function OperationsWorkspace() {
   const workspace =
     useOperationsWorkspace();
+  const [selectedSection, setSelectedSection] = useState("start");
+  const operatorView = workspace.user?.role === "OPERADOR_ESTACION";
+  const sections = [
+    { key: "start", title: "Iniciar recorrido" },
+    { key: "visit", title: "Registrar visita" },
+    { key: "history", title: "Historial" },
+  ];
 
   return (
     <section className="feature-page operations-page">
@@ -33,8 +42,12 @@ export function OperationsWorkspace() {
       <PageHeader
         eyebrow="OPERACIÓN DE ESTACIONES"
         title="Recorridos y registros"
-        description="Registra cada recorrido y conserva el orden de estaciones, la demanda y las evaluaciones."
+        description={operatorView ? "Gestiona los recorridos activos y registra las visitas realizadas en cada estación."
+          : "Registra cada recorrido y conserva el orden de estaciones, la demanda y las evaluaciones."}
       />
+
+      {operatorView && <CatalogResourceTabs resources={sections} selected={selectedSection} onSelect={setSelectedSection}
+        label="Secciones de recorridos" panelId="operator-operations-panel" idPrefix="operator-operations-tab" />}
 
 
       <Notice
@@ -43,9 +56,12 @@ export function OperationsWorkspace() {
       />
 
 
-      <div className="work-grid">
+      <div className={operatorView ? "operation-section" : "work-grid"}
+        id={operatorView ? "operator-operations-panel" : undefined}
+        role={operatorView ? "tabpanel" : undefined}
+        aria-labelledby={operatorView ? `operator-operations-tab-${selectedSection}` : undefined}>
 
-        <TripStartForm
+        {(!operatorView || selectedSection === "start") && <TripStartForm
           lines={workspace.lines}
           trips={workspace.trips}
           line={workspace.line}
@@ -55,10 +71,11 @@ export function OperationsWorkspace() {
           onLineChange={workspace.setSelectedLine}
           onBusChange={workspace.setSelectedBus}
           onSubmit={workspace.startTrip}
-        />
+        />}
 
 
-        <VisitForm
+        {(!operatorView || selectedSection === "visit") && <VisitForm
+          separateEvaluation={operatorView}
           trips={workspace.trips}
           selectedTrip={workspace.selectedTrip}
           activeTrip={workspace.activeTrip}
@@ -73,18 +90,20 @@ export function OperationsWorkspace() {
           onPeopleBoardingChange={workspace.setPeopleBoarding}
           onDemandChange={workspace.setDemand}
           onSubmit={workspace.recordVisit}
-        />
+        />}
+
+        {operatorView && selectedSection === "history" && <TripsTable trips={workspace.trips} busy={workspace.busy} onCancel={workspace.setCancelTrip} />}
 
       </div>
 
 
-      <TripsTable
+      {!operatorView && <TripsTable
         trips={workspace.trips}
         busy={workspace.busy}
         onCancel={
           workspace.setCancelTrip
         }
-      />
+      />}
 
 
       <CancelTripDialog

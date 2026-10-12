@@ -60,6 +60,9 @@ export function useReportsWorkspace() {
       ...((bus.asignaciones_parqueo ?? []) as Row[]).map((assignment) => ({
         bus: bus.codigo, tipo: "Parqueo", destino: textValue(assignment.parqueo), inicio: assignment.fecha_inicio, fin: assignment.fecha_fin,
       })),
+      ...((bus.asignaciones_piloto ?? []) as Row[]).map((assignment) => ({
+        bus: bus.codigo, tipo: "Piloto", destino: textValue(assignment.piloto), inicio: assignment.fecha_inicio, fin: assignment.fecha_fin,
+      })),
     ]);
     return raw;
   }, [kind, raw]);

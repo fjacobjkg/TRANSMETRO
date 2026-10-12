@@ -2,17 +2,20 @@ import { prisma } from "../../lib/prisma.js";
 import { ensure } from "../../lib/domain-error.js";
 import type { Prisma } from "../../../generated/prisma/client.js";
 import { writeAudit } from "../audit/audit.service.js";
+import { ensureBusPilot } from "../personnel/pilot-bus.service.js";
 const current = () => ({ fecha_fin: null, fecha_inicio: { lte: new Date() } });
 
 export async function listBuses(search?: string) {
-  return { items: await prisma.bus.findMany({
+  const items = await prisma.bus.findMany({
     where: search ? { OR: [{ codigo: { contains: search } }, { placa: { contains: search } }] } : {},
     orderBy: { codigo: "asc" },
     include: {
       asignaciones_linea: { where: current(), include: { linea: true } },
       asignaciones_parqueo: { where: current(), include: { parqueo: { include: { estacion: true } } } },
+      asignaciones_piloto: { where: { ...current(), piloto: { activo: true } }, include: { piloto: true } },
     },
-  }) };
+  });
+  return { items: items.map(item => ({ ...item, piloto_asignado: item.asignaciones_piloto[0]?.piloto.nombre ?? "Sin asignar" })) };
 }
 
 export async function listParkings(stationId?: number) {
@@ -65,6 +68,7 @@ export async function updateBus(actorId: number, id: number, input: { code?: str
       ensure(!openTrip, 409, "No se puede desactivar un bus con un recorrido abierto.");
       if (lineAssignment?.linea.activo) await ensureLineMinimumAfterRemoval(tx, lineAssignment.linea_id, id);
       if (lineAssignment) await tx.asignacion_bus_linea.update({ where: { id_asignacion_bus_linea: lineAssignment.id_asignacion_bus_linea }, data: { fecha_fin: new Date() } });
+      await tx.asignacion_piloto_bus.updateMany({ where: { bus_id: id, fecha_fin: null }, data: { fecha_fin: new Date() } });
     }
     const item = await tx.bus.update({ where: { id_bus: id }, data: { ...(input.code === undefined ? {} : { codigo: input.code }), ...(input.plate === undefined ? {} : { placa: input.plate }), ...(input.capacity === undefined ? {} : { capacidad_maxima: input.capacity }), ...(input.active === undefined ? {} : { activo: input.active }) } });
     await writeAudit(tx, { userId: actorId, action: "ACTUALIZAR", entity: "bus", entityId: item.id_bus, description: `${item.codigo} · ${item.placa}` });
@@ -88,10 +92,12 @@ async function ensureLineMinimumAfterRemoval(tx: Prisma.TransactionClient, lineI
 
 export async function assignBusLine(actorId: number, busId: number, lineId: number | null) {
   return prisma.$transaction(async (tx) => {
+    await tx.$queryRaw`SELECT id FROM buses WHERE id = ${busId} FOR UPDATE`;
     const bus = await tx.bus.findUnique({ where: { id_bus: busId } });
     ensure(bus?.activo, 404, "No se encontró un bus activo.");
     const openTrip = await tx.recorrido.count({ where: { bus_id: busId, estado: "EN_CURSO" } });
     ensure(openTrip === 0, 409, "Cierra el recorrido abierto antes de reasignar el bus.");
+    if (lineId !== null) await ensureBusPilot(tx, busId, "El bus debe tener un piloto asignado antes de incorporarse a una línea.");
     const currentAssignment = await tx.asignacion_bus_linea.findFirst({ where: { bus_id: busId, ...current() } });
     if (currentAssignment?.linea_id === lineId) return currentAssignment;
     if (currentAssignment) await ensureLineMinimumAfterRemoval(tx, currentAssignment.linea_id, busId);

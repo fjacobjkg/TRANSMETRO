@@ -8,7 +8,7 @@ import {
 export function AdminReportsPage() {
   return (
     <div className="admin-page admin-reports-page">
-      <ReportsWorkspace />
+      <ReportsWorkspace showNetwork={false} paymentSimulation />
     </div>
   );
 }

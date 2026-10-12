@@ -11,10 +11,6 @@ import {
 } from "../../components/dashboard/MetricGrid";
 
 import {
-  NetworkPanel,
-} from "../../components/dashboard/NetworkPanel";
-
-import {
   Notice,
   PageHeader,
 } from "../../components/ui/PageHeader";
@@ -237,7 +233,6 @@ export function AdminDashboardPage() {
 
       </div>
 
-      <NetworkPanel />
     </section>
   );
 }

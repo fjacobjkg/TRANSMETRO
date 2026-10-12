@@ -62,28 +62,6 @@
 
 
 /* ========================================
-   RESOURCE TABS
-======================================== */
-
-.admin-transport-page .resource-tabs {
-  gap: 0.55rem;
-
-  margin-bottom: 1.25rem;
-}
-
-
-.admin-transport-page .resource-tabs button {
-  min-height: 2.65rem;
-
-  padding:
-    0.65rem 0.9rem;
-
-  font-size: 0.78rem;
-  font-weight: 650;
-}
-
-
-/* ========================================
    TABLE / RESOURCE CARD
 ======================================== */
 
@@ -304,18 +282,6 @@
   }
 
 
-  .admin-transport-page .resource-tabs {
-    gap: 0.45rem;
-  }
-
-
-  .admin-transport-page .resource-tabs button {
-    min-height: 2.5rem;
-
-    font-size: 0.74rem;
-  }
-
-
   .admin-transport-page .table-tools {
     align-items: stretch;
 
@@ -326,4 +292,28 @@
   .admin-transport-page .search-field {
     max-width: none;
   }
+}
+
+/* Keep the existing editor and diagram inside the transport page on narrow screens. */
+.admin-transport-page .line-order-editor {
+  width: 100%;
+  min-width: 0;
+}
+
+.admin-transport-page .line-order-editor :is(label, select, input),
+.admin-transport-page :is(.network-lines, .network-line, .network-heading > div) {
+  min-width: 0;
+}
+
+.admin-transport-page .line-order-editor .form-footer {
+  flex-wrap: wrap;
+}
+
+.admin-transport-page .network-heading h3 {
+  overflow-wrap: anywhere;
+}
+
+.admin-transport-page .dialog-title h2 {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }

@@ -26,8 +26,25 @@ export const resourcesBySection: Record<string, Resource[]> = {
     { key: "assign-guard", title: "Asignar guardia", description: "Vincula un guardia activo con un acceso físico.", path: "/api/security/accesses", method: "POST", writePath: (values) => `/api/security/accesses/${values.accessId}/guards`, fields: [{ name: "accessId", label: "ID de acceso", kind: "number", required: true, pathOnly: true }, { name: "guardId", label: "ID de guardia", kind: "number", required: true }] },
     { key: "accesses", title: "Accesos físicos", description: "Crea accesos por estación; habilítalos después de asignar guardia.", path: "/api/security/accesses", method: "POST", fields: [{ name: "stationId", label: "ID de estación", kind: "number", required: true }, { name: "name", label: "Nombre del acceso", required: true }] },
     { key: "enable-access", title: "Habilitar acceso físico", description: "La API exige por lo menos un guardia vigente antes de habilitarlo.", path: "/api/security/accesses", method: "PATCH", writePath: (values) => `/api/security/accesses/${values.accessId}`, fields: [{ name: "accessId", label: "ID de acceso", kind: "number", required: true, pathOnly: true }, { name: "active", label: "Estado", kind: "select", required: true, options: [option("Habilitado", "true"), option("Deshabilitado", "false")] }] },
-    { key: "media", title: "Medios de acceso", description: "Catálogo informativo; no procesa pagos ni transacciones.", path: "/api/access-media/media", method: "POST", fields: [{ name: "name", label: "Nombre", required: true }, { name: "description", label: "Descripción" }] },
-    { key: "station-media", title: "Habilitar medio", description: "Activa un medio de acceso en una estación.", path: "/api/transport/stations", method: "PUT", writePath: (values) => `/api/access-media/stations/${values.stationId}/media`, fields: [{ name: "stationId", label: "ID de estación", kind: "number", required: true, pathOnly: true }, { name: "mediaId", label: "ID de medio", kind: "number", required: true }, { name: "active", label: "Estado", kind: "select", required: true, options: [option("Habilitado", "true"), option("Deshabilitado", "false")] }] },
+    { key: "media", title: "Medios de pago", description: "Administra los medios utilizados para ingresar al servicio y define en qué estaciones pueden utilizarse.",
+      helpText: "El sistema utiliza estos medios para el control interno y la estimación de recaudación. No procesa transacciones financieras ni administra saldos de pasajeros.",
+      path: "/api/access-media/media", method: "POST", fields: [{ name: "name", label: "Nombre", required: true }, { name: "description", label: "Descripción" },
+        { name: "tariff", label: "Tarifa (Q)", kind: "number", min: 0.01, max: 99999999.99, step: "0.01", required: true },
+        { name: "active", label: "Estado", kind: "select", required: true, options: [option("Activo", "true"), option("Inactivo", "false")] }] },
+    { key: "station-media", title: "Habilitar medio de pago", description: "Habilita el medio en una estación y configura cuál se utiliza para recaudación.", path: "/api/transport/stations", method: "PUT", writePath: (values) => `/api/access-media/stations/${values.stationId}/media`, fields: [{ name: "stationId", label: "Estación", kind: "number", required: true, pathOnly: true }, { name: "mediaId", label: "Medio de pago", kind: "number", required: true }, { name: "active", label: "Estado", kind: "select", required: true, options: [option("Habilitado", "true"), option("Deshabilitado", "false")] },
+      { name: "isPrincipal", label: "Usar como medio principal para recaudación", kind: "select", required: true, options: [option("Sí", "true"), option("No", "false")] }] },
+  ],
+  internalAssignments: [
+    { key: "pilot-bus", title: "Asignar / reasignar bus", description: "El cambio conserva el historial y requiere un bus disponible.", path: "/api/fleet/buses", method: "PUT",
+      writePath: values => `/api/personnel/pilots/${values.pilotId}/bus`, fields: [
+        { name: "pilotId", label: "Piloto", kind: "number", required: true, pathOnly: true },
+        { name: "busId", label: "Bus", kind: "number", required: true }, { name: "startDate", label: "Fecha de inicio (vacío: ahora)", kind: "datetime-local" }],
+      body: values => ({ busId: Number(values.busId), ...(values.startDate ? { startDate: new Date(values.startDate).toISOString() } : {}) }) },
+    { key: "bus-pilot", title: "Asignar / reasignar piloto", description: "Selecciona un piloto disponible. No se permite cambiarlo con un recorrido abierto.", path: "/api/personnel/pilots", method: "PUT",
+      writePath: values => `/api/fleet/buses/${values.busId}/pilot`, fields: [
+        { name: "busId", label: "Bus", kind: "number", required: true, pathOnly: true }, { name: "pilotId", label: "Piloto", kind: "number", required: true },
+        { name: "startDate", label: "Fecha de inicio (vacío: ahora)", kind: "datetime-local" }],
+      body: values => ({ pilotId: Number(values.pilotId), ...(values.startDate ? { startDate: new Date(values.startDate).toISOString() } : {}) }) },
   ],
   fleet: [
     { key: "parkings", title: "Parqueos", description: "Registra parqueos vinculados con una estación.", path: "/api/fleet/parkings", method: "POST", fields: [{ name: "stationId", label: "ID de estación", kind: "number", required: true }, { name: "name", label: "Nombre", required: true }] },

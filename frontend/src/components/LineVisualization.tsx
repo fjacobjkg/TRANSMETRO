@@ -1,12 +1,20 @@
 import "../styles/network.css";
 import { useNetworkLines } from "../hooks/dashboard/useNetworkLines";
+import type { NetworkLine } from "../types/dashboard.types";
 
 export function LineVisualization() {
   const { lines, error, loading } = useNetworkLines();
+  return <LineDiagram lines={lines} error={error} loading={loading} />;
+}
+
+export function LineDiagram({ lines, error, loading, emptyText = "No hay líneas operativas para mostrar.",
+  note = "Esquema del orden de estaciones. Las conexiones indican estaciones compartidas; no representa ubicación geográfica." }: {
+  lines: NetworkLine[]; error: string; loading: boolean; emptyText?: string; note?: string;
+}) {
   return <div className="network-lines">
     {loading && <p className="muted" role="status">Cargando red de transporte…</p>}
     {error && <p role="alert">{error}</p>}
-    {!lines.length && !error && !loading && <p className="muted">No hay líneas operativas para mostrar.</p>}
+    {!lines.length && !error && !loading && <p className="muted">{emptyText}</p>}
     {lines.map((line, index) => <article className={"network-line line-color-" + (index % 3)} key={line.id}>
       <div className="network-heading"><span className="line-code">{line.code}</span>
         <div><h3>{line.name}</h3><p>{line.municipality} · {line.stations.length} estaciones</p></div>
@@ -20,6 +28,6 @@ export function LineVisualization() {
         {stop.distanceToNext !== null && <small className="segment-distance">{stop.distanceToNext} km →</small>}
       </li>)}</ol>
     </article>)}
-    <p className="muted">Esquema del orden de estaciones. Las conexiones indican estaciones compartidas; no representa ubicación geográfica.</p>
+    <p className="muted">{note}</p>
   </div>;
 }

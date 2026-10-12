@@ -19,13 +19,14 @@ export function getPanelsByRole(role: UserRole): Panel[] {
   return modules[role].map((id) => ({
     id, icon: id === "access-counts" ? "reports" : id === "security-access" ? "personnel" : id,
     title: role === "OPERADOR_ESTACION" && id === "operations" ? "Recorridos"
+      : role === "ADMIN" && id === "operations" ? "Seguimiento operativo"
       : role === "ADMIN" && id === "personnel" ? "Personal"
       : role === "ADMINISTRATIVO" && id === "personnel" ? "Personal y accesos" : items[id],
     group: id === "home" ? "Centro de operaciones"
       : role === "OPERADOR_ESTACION" ? (id === "operations" ? "Operación" : "Control de accesos")
       : role === "ADMINISTRATIVO" ? (id === "reports" ? "Información" : "Consulta operativa")
       : ["users", "transport", "personnel", "security-access"].includes(id) ? "Administración"
-      : ["fleet", "operations"].includes(id) ? "Recursos operativos" : "Información y control",
+      : id === "fleet" ? "Recursos operativos" : "Información y control",
     path: prefixes[role] + "/" + (id === "home" ? "dashboard" : id),
   }));
 }

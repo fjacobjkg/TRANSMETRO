@@ -3,14 +3,20 @@ import { ensure } from "../../lib/domain-error.js";
 import { writeAudit } from "../audit/audit.service.js";
 
 export async function listPilots(search?: string) {
-  const items = await prisma.piloto.findMany({ where: search ? { nombre: { contains: search } } : {}, orderBy: { nombre: "asc" } });
-  return { items };
+  const items = await prisma.piloto.findMany({ where: search ? { nombre: { contains: search } } : {}, orderBy: { nombre: "asc" },
+    include: { asignaciones_bus: { where: { fecha_fin: null, fecha_inicio: { lte: new Date() } }, include: { bus: true } } } });
+  return { items: items.map(item => ({ ...item, bus_asignado: item.asignaciones_bus[0]?.bus.codigo ?? "Sin asignar" })) };
 }
 
 export async function savePilot(actorId: number, input: { name?: string | undefined; residence?: string | undefined; education?: string | null | undefined; phone?: string | null | undefined; email?: string | null | undefined; active?: boolean | undefined }, id?: number | undefined) {
   return prisma.$transaction(async (tx) => {
     if (id !== undefined) ensure(await tx.piloto.findUnique({ where: { id_piloto: id } }), 404, "No se encontró el piloto.");
     else ensure(input.name && input.residence, 400, "Nombre y residencia son obligatorios.");
+    if (id !== undefined && input.active === false) {
+      await tx.$queryRaw`SELECT id FROM pilotos WHERE id = ${id} FOR UPDATE`;
+      ensure(await tx.asignacion_piloto_bus.count({ where: { piloto_id: id, fecha_fin: null } }) === 0,
+        409, "Finaliza o reasigna el bus del piloto antes de desactivarlo.");
+    }
     const data = {
       ...(input.name === undefined ? {} : { nombre: input.name }),
       ...(input.residence === undefined ? {} : { residencia: input.residence }),
@@ -24,7 +30,7 @@ export async function savePilot(actorId: number, input: { name?: string | undefi
       : await tx.piloto.update({ where: { id_piloto: id }, data });
     await writeAudit(tx, { userId: actorId, action: id === undefined ? "CREAR" : "ACTUALIZAR", entity: "piloto", entityId: item.id_piloto, description: item.nombre });
     return item;
-  });
+  }, { isolationLevel: "Serializable" });
 }
 
 export async function listOperators() {

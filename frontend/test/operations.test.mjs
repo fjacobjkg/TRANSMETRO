@@ -2,7 +2,6 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { arrivingPeople, hasPassengerMovements, previewVisit } from "../src/utils/visit-passengers.ts";
 import { tripAccessSummary } from "../src/utils/trip-access-summary.ts";
-import { ACCESS_REFERENCE_VALUE } from "../src/config/access-reference.ts";
 
 describe("Vista previa y continuidad persistida", () => {
   it("calcula la ocupación y valida bajadas, abordaje y capacidad", () => {
@@ -32,17 +31,19 @@ describe("Vista previa y continuidad persistida", () => {
 });
 
 describe("Accesos y recaudación referencial", () => {
-  const visits = [80,375,10].map((demanda,index) => ({ id_visita:String(index+1),orden:index+1,demanda,ocupacion:220,estacion:{nombre:`Estación ${index+1}`} }));
+  const visits = [80,375,10].map((demanda,index) => ({ id_visita:String(index+1),orden:index+1,demanda,ocupacion:220,estacion:{nombre:`Estación ${index+1}`},
+    revenue: { accesses: demanda, medium: "Tarjeta Ciudadana", tariff: "1.00", estimatedRevenue: `${demanda}.00`, configurationIssue: null } }));
   it("suma 465 accesos y Q465.00 sin contar pasajeros dentro del bus", () => {
-    const result=tripAccessSummary({estado:"FINALIZADO",visitas:visits},ACCESS_REFERENCE_VALUE);
-    assert.equal(result.accesses,465); assert.equal(result.referenceTotal,465); assert.equal(result.stationsServed,3);
+    const result=tripAccessSummary({estado:"FINALIZADO",visitas:visits});
+    assert.equal(result.accesses,465); assert.equal(result.referenceTotal,"465.00"); assert.equal(result.stationsServed,3);
     assert.deepEqual(result.stations.map(s=>s.accesses),[80,375,10]);
   });
   it("excluye recorridos activos y cancelados", () => {
-    for (const estado of ["EN_CURSO","CANCELADO"]) assert.equal(tripAccessSummary({estado,visitas:visits},ACCESS_REFERENCE_VALUE),null);
+    for (const estado of ["EN_CURSO","CANCELADO"]) assert.equal(tripAccessSummary({estado,visitas:visits}),null);
   });
   it("admite histórico y recorridos sin visitas sin inventar ingresos", () => {
-    assert.equal(tripAccessSummary({estado:"FINALIZADO",visitas:[]},ACCESS_REFERENCE_VALUE).accesses,0);
-    assert.equal(tripAccessSummary({estado:"FINALIZADO",visitas:visits},2).referenceTotal,930);
+    assert.equal(tripAccessSummary({estado:"FINALIZADO",visitas:[]}).accesses,0);
+    const configured = visits.map(visit => ({ ...visit, revenue: { ...visit.revenue, tariff: "2.00", estimatedRevenue: `${visit.demanda * 2}.00` } }));
+    assert.equal(tripAccessSummary({estado:"FINALIZADO",visitas:configured}).referenceTotal,"930.00");
   });
 });

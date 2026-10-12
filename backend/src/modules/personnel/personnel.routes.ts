@@ -1,10 +1,21 @@
 import { Router } from "express";
 import { getAuthenticatedUser, requireAuth, requireRole } from "../../middleware/auth.js";
-import { assignmentSchema, idParamSchema, pilotSchema, pilotUpdateSchema } from "./personnel.schema.js";
+import { assignmentSchema, idParamSchema, pilotSchema, pilotUpdateSchema, pilotBusSchema } from "./personnel.schema.js";
+import { assignPilotBus, endPilotBus } from "./pilot-bus.service.js";
 import { assignOperator, endOperatorAssignment, listOperators, listPilots, savePilot } from "./personnel.service.js";
 
 export const personnelRouter = Router();
 personnelRouter.use(requireAuth);
+personnelRouter.put("/pilots/:id/bus", requireRole("ADMIN"), async (request, response, next) => {
+  const id = idParamSchema.safeParse(request.params.id); const body = pilotBusSchema.safeParse(request.body);
+  if (!id.success || !body.success) { response.status(400).json({ message: "Piloto, bus o fecha de inicio inválidos.", issues: body.success ? undefined : body.error.issues }); return; }
+  try { response.json({ item: await assignPilotBus(getAuthenticatedUser(response).id, id.data, body.data.busId, body.data.startDate) }); } catch (error) { next(error); }
+});
+personnelRouter.delete("/pilot-bus-assignments/:id", requireRole("ADMIN"), async (request, response, next) => {
+  const id = idParamSchema.safeParse(request.params.id);
+  if (!id.success) { response.status(400).json({ message: "Asignación inválida." }); return; }
+  try { response.json({ item: await endPilotBus(getAuthenticatedUser(response).id, id.data) }); } catch (error) { next(error); }
+});
 personnelRouter.get("/pilots", requireRole("ADMIN", "ADMINISTRATIVO"), async (request, response, next) => {
   try { response.json(await listPilots(typeof request.query.search === "string" ? request.query.search : undefined)); } catch (error) { next(error); }
 });

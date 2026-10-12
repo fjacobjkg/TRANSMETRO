@@ -2,9 +2,16 @@ import { Router } from "express";
 import { getAuthenticatedUser, requireAuth, requireRole } from "../../middleware/auth.js";
 import { assignBusLineSchema, assignParkingSchema, busSchema, busUpdateSchema, idParamSchema, parkingSchema, parkingUpdateSchema } from "./fleet.schema.js";
 import { assignBusLine, assignBusParking, createBus, listBuses, listParkings, saveParking, updateBus } from "./fleet.service.js";
+import { busPilotSchema } from "../personnel/personnel.schema.js";
+import { assignPilotBus } from "../personnel/pilot-bus.service.js";
 
 export const fleetRouter = Router();
 fleetRouter.use(requireAuth);
+fleetRouter.put("/buses/:id/pilot", requireRole("ADMIN"), async (request, response, next) => {
+  const id = idParamSchema.safeParse(request.params.id); const body = busPilotSchema.safeParse(request.body);
+  if (!id.success || !body.success) { response.status(400).json({ message: "Bus, piloto o fecha de inicio inválidos." }); return; }
+  try { response.json({ item: await assignPilotBus(getAuthenticatedUser(response).id, body.data.pilotId, id.data, body.data.startDate, true) }); } catch (error) { next(error); }
+});
 fleetRouter.get("/buses", requireRole("ADMIN", "ADMINISTRATIVO"), async (request, response, next) => {
   try { response.json(await listBuses(typeof request.query.search === "string" ? request.query.search : undefined)); } catch (error) { next(error); }
 });

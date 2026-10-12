@@ -174,6 +174,7 @@ model bus {
   asignaciones_linea asignacion_bus_linea[]
   asignaciones_parqueo asignacion_bus_parqueo[]
   recorridos     recorrido[]
+  asignaciones_piloto asignacion_piloto_bus[]
 
   @@unique([codigo], map: "uq_buses_codigo")
   @@unique([placa], map: "uq_buses_placa")
@@ -234,6 +235,7 @@ model piloto {
   activo Boolean @default(true)
   creado_en DateTime @default(now()) @db.Timestamp(0)
   actualizado_en DateTime @default(now()) @updatedAt @db.Timestamp(0)
+  asignaciones_bus asignacion_piloto_bus[]
 
   @@map("pilotos")
 }
@@ -296,6 +298,7 @@ model medio_acceso {
   id_medio_acceso Int @id @default(autoincrement()) @map("id") @db.UnsignedInt
   nombre String @db.VarChar(100)
   descripcion String? @db.VarChar(255)
+  tarifa Decimal @default(1.00) @db.Decimal(10,2)
   activo Boolean @default(true)
   creado_en DateTime @default(now()) @db.Timestamp(0)
   actualizado_en DateTime @default(now()) @updatedAt @db.Timestamp(0)
@@ -310,6 +313,7 @@ model estacion_medio_acceso {
   estacion_id Int @db.UnsignedInt
   medio_acceso_id Int @db.UnsignedInt
   activo Boolean @default(true)
+  es_principal Boolean @default(false)
   creado_en DateTime @default(now()) @db.Timestamp(0)
   estacion                 estacion @relation(fields: [estacion_id], references: [id_estacion], onDelete: Restrict, onUpdate: Cascade, map: "fk_estacion_medio_estacion")
   medio_acceso             medio_acceso @relation(fields: [medio_acceso_id], references: [id_medio_acceso], onDelete: Restrict, onUpdate: Cascade, map: "fk_estacion_medio_medio")
@@ -317,7 +321,23 @@ model estacion_medio_acceso {
 
   @@unique([estacion_id, medio_acceso_id], map: "uq_estacion_medio")
   @@index([medio_acceso_id], map: "fk_estacion_medio_medio")
+  @@index([estacion_id, activo, es_principal], map: "idx_estacion_medio_principal")
   @@map("estacion_medio_acceso")
+}
+
+model asignacion_piloto_bus {
+  id_asignacion_piloto_bus Int @id @default(autoincrement()) @map("id") @db.UnsignedInt
+  piloto_id Int @db.UnsignedInt
+  bus_id Int @db.UnsignedInt
+  fecha_inicio DateTime @db.DateTime(0)
+  fecha_fin DateTime? @db.DateTime(0)
+  creado_en DateTime @default(now()) @db.Timestamp(0)
+  piloto piloto @relation(fields: [piloto_id], references: [id_piloto], onDelete: Restrict, onUpdate: Cascade, map: "fk_piloto_bus_piloto")
+  bus bus @relation(fields: [bus_id], references: [id_bus], onDelete: Restrict, onUpdate: Cascade, map: "fk_piloto_bus_bus")
+
+  @@index([piloto_id, fecha_fin], map: "idx_piloto_bus_piloto_vigencia")
+  @@index([bus_id, fecha_fin], map: "idx_piloto_bus_bus_vigencia")
+  @@map("asignacion_piloto_bus")
 }
 
 model registro_acceso {

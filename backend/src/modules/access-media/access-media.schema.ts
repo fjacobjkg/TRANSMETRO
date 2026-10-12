@@ -1,8 +1,12 @@
 import { z } from "zod";
 export const idParamSchema = z.coerce.number().int().positive();
-export const mediaSchema = z.object({ name: z.string().trim().min(2).max(100), description: z.string().trim().max(255).nullable().optional() });
-export const mediaUpdateSchema = z.object({ name: z.string().trim().min(2).max(100).optional(), description: z.string().trim().max(255).nullable().optional(), active: z.boolean().optional() }).refine((value) => Object.keys(value).length > 0);
-export const stationMediaSchema = z.object({ mediaId: z.number().int().positive(), active: z.boolean().optional() });
+export const tariffSchema = z.union([z.string().trim(), z.number().finite()]).transform(String)
+  .refine(value => /^\d{1,8}(\.\d{1,2})?$/.test(value) && Number(value) > 0,
+    { message: "La tarifa debe ser mayor que cero y tener como máximo dos decimales." });
+export const mediaSchema = z.object({ name: z.string().trim().min(2).max(100), description: z.string().trim().max(255).nullable().optional(), tariff: tariffSchema, active: z.boolean().optional() });
+export const mediaUpdateSchema = mediaSchema.partial().refine((value) => Object.keys(value).length > 0);
+export const stationMediaSchema = z.object({ mediaId: z.number().int().positive(), active: z.boolean().optional(), isPrincipal: z.boolean().optional() })
+  .refine(value => !(value.active === false && value.isPrincipal === true), { message: "Un medio deshabilitado no puede ser principal." });
 export const accessCountSchema = z.object({
   stationMediaId: z.number().int().positive(),
   recordDate: z.iso.date(),

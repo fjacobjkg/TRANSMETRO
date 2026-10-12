@@ -1,12 +1,16 @@
 import { Notice } from "../ui/PageHeader";
+import { useEffect } from "react";
 import { optionLabel } from "../../config/catalog/relations";
 import { useLineOrderEditor } from "../../hooks/catalog/useLineOrderEditor";
 
-export function LineOrderEditor({ onSaved }: { onSaved: () => void }) {
-  const { stations, lines, lineId, stops, setStops, error, message, busy, selectLine, update, move, submit } = useLineOrderEditor(onSaved);
+export function LineOrderEditor({ onSaved, initialLineId, onBusyChange }: {
+  onSaved: () => void; initialLineId?: string; onBusyChange?: (busy: boolean) => void;
+}) {
+  const { stations, lines, lineId, stops, setStops, error, message, busy, selectLine, update, move, submit } = useLineOrderEditor(onSaved, initialLineId);
+  useEffect(() => { onBusyChange?.(busy); }, [busy, onBusyChange]);
   return <form className="line-order-editor" onSubmit={submit}>
     <Notice error={error} message={message} />
-    <label>Línea<select required value={lineId} onChange={(event) => selectLine(event.target.value)}>
+    <label>Línea<select required disabled={Boolean(initialLineId)} value={lineId} onChange={(event) => selectLine(event.target.value)}>
       <option value="">Selecciona la línea que quieres configurar</option>
       {lines.map((row) => <option key={String(row.id_linea)} value={String(row.id_linea)}>{optionLabel(row)}</option>)}
     </select></label>

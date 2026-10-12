@@ -1,10 +1,10 @@
 /* Shared dimensions of the approved Cuentas y permisos navigation. */
-:is(.admin-users-page, .admin-personnel-page, .operator-operations-page) .resource-tabs {
+:is(.admin-users-page, .admin-personnel-page, .admin-transport-page, .admin-operations-page, .operator-operations-page) .resource-tabs {
   gap: 0.55rem;
   margin-bottom: 1.25rem;
 }
 
-:is(.admin-users-page, .admin-personnel-page, .operator-operations-page) .resource-tabs button {
+:is(.admin-users-page, .admin-personnel-page, .admin-transport-page, .admin-operations-page, .operator-operations-page) .resource-tabs button {
   min-height: 2.65rem;
   padding: 0.65rem 0.9rem;
   font-size: 0.78rem;
@@ -12,7 +12,7 @@
 }
 
 @media (max-width: 640px) {
-  :is(.admin-users-page, .admin-personnel-page, .operator-operations-page) .resource-tabs button {
+  :is(.admin-users-page, .admin-personnel-page, .admin-transport-page, .admin-operations-page, .operator-operations-page) .resource-tabs button {
     min-height: 2.5rem;
     font-size: 0.74rem;
   }

@@ -4,6 +4,8 @@ import type { AuthenticatedUser } from "../../middleware/auth.js";
 import { attachVisitEvaluations, evaluationDescription } from "../../lib/visit-evaluation.js";
 import { auditEntityId, writeAudit } from "../audit/audit.service.js";
 import { calculateDepartureOccupancy, evaluateVisit } from "./route-operation.rules.js";
+import { attachVisitRevenue } from "../access-media/revenue.service.js";
+import { ensureBusPilot } from "../personnel/pilot-bus.service.js";
 const current = () => ({ fecha_fin: null, fecha_inicio: { lte: new Date() } });
 
 export async function listOperationalLines(user: AuthenticatedUser) {
@@ -16,6 +18,7 @@ export async function listOperationalLines(user: AuthenticatedUser) {
 
 export async function startTrip(user: AuthenticatedUser, busId: number, lineId: number) {
   return prisma.$transaction(async (tx) => {
+    await tx.$queryRaw`SELECT id FROM buses WHERE id = ${busId} FOR UPDATE`;
     const [line, bus, assignment, open] = await Promise.all([
       tx.linea.findUnique({ where: { id_linea: lineId }, include: { estaciones: { where: { activo: true }, orderBy: { orden: "asc" } } } }),
       tx.bus.findUnique({ where: { id_bus: busId } }),
@@ -24,6 +27,9 @@ export async function startTrip(user: AuthenticatedUser, busId: number, lineId: 
     ]);
     ensure(line?.activo, 400, "La línea no está habilitada para operar.");
     ensure(bus?.activo && assignment, 400, "El bus no tiene una asignación vigente a esta línea.");
+    const parking = await tx.asignacion_bus_parqueo.findFirst({ where: { bus_id: busId, ...current(), parqueo: { activo: true, estacion: { activo: true } } } });
+    ensure(parking, 409, "La unidad no tiene un parqueo vigente asignado.");
+    await ensureBusPilot(tx, busId, "La unidad no tiene un piloto vigente asignado.");
     ensure(!open, 409, "El bus ya tiene un recorrido en curso.");
     ensure(line.estaciones.length > 0, 409, "La línea no tiene estaciones configuradas.");
     if (user.role === "OPERADOR_ESTACION") ensure(line.estaciones.some(({ estacion_id }) => user.stationIds.includes(estacion_id)), 403, "No tienes asignación vigente en esta línea.");
@@ -49,7 +55,8 @@ export async function listTrips(user: AuthenticatedUser, filters: { lineId?: num
   ]);
   const capacities = new Map(items.flatMap(trip=>trip.visitas.map(visit=>[String(visit.id_visita),trip.bus.capacidad_maxima] as const)));
   const visits = await attachVisitEvaluations(items.flatMap(trip=>trip.visitas),visit=>capacities.get(String(visit.id_visita))!);
-  const enriched = new Map(visits.map(visit=>[String(visit.id_visita),visit]));
+  const revenueVisits = await attachVisitRevenue(visits);
+  const enriched = new Map(revenueVisits.map(visit=>[String(visit.id_visita),visit]));
   return { items: items.map(trip=>({...trip,visitas:trip.visitas.map(visit=>enriched.get(String(visit.id_visita))!)})), total, page: filters.page, pageSize: filters.pageSize };
 }
 

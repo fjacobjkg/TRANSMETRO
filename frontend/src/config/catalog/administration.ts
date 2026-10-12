@@ -17,6 +17,7 @@ export interface CatalogView {
   rowActions: Record<string, CatalogContextAction[]>;
   createActions?: Record<string, CatalogContextAction>;
   createLabels?: Record<string, string>;
+  inactiveLabels?: Record<string, string>;
 }
 
 export const personnelView: CatalogView = {
@@ -28,7 +29,8 @@ export const personnelView: CatalogView = {
     resourceKey: "users", label: "＋ Crear operador", formTitle: "Crear operador",
     initialValues: { role: "OPERADOR_ESTACION" }, allowedOptions: { role: ["OPERADOR_ESTACION"] },
   } },
-  rowActions: { operators: [{
+  rowActions: { pilots: [{ resourceKey: "pilot-bus", label: row => (row.asignaciones_bus as Row[] | undefined)?.length ? "Reasignar bus" : "Asignar bus",
+    formTitle: "Asignar / reasignar bus", valuesFromRow: row => ({ pilotId: String(row.id_piloto) }) }], operators: [{
     resourceKey: "assign-operator", label: "Asignar estación", formTitle: "Asignar estación",
     valuesFromRow: row => ({ userId: String(row.id_usuario) }),
   }] },
@@ -48,6 +50,13 @@ export const securityAccessView: CatalogView = {
     media: [{ resourceKey: "station-media", label: "Habilitar en estación", formTitle: "Habilitar en estación",
       initialValues: { active: "true" }, valuesFromRow: row => ({ mediaId: String(row.id_medio_acceso) }) }],
   },
+};
+
+export const fleetView: CatalogView = {
+  title: "Flota y parqueos", description: "Consulta registros y conserva la trazabilidad de cada cambio.",
+  resourceKeys: ["parkings", "buses", "assign-line", "assign-parking"],
+  rowActions: { buses: [{ resourceKey: "bus-pilot", label: row => (row.asignaciones_piloto as Row[] | undefined)?.length ? "Reasignar piloto" : "Asignar piloto",
+    valuesFromRow: row => ({ busId: String(row.id_bus) }) }] },
 };
 
 // Presentation-only adaptation: keep the existing endpoint, method and payload builder.

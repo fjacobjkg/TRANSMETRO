@@ -1,5 +1,7 @@
 import {
   useMemo,
+  useState,
+  type ReactNode,
 } from "react";
 
 import {
@@ -35,6 +37,9 @@ import {
 import { contextFormResource, type CatalogContextAction, type CatalogView } from "../../config/catalog/administration";
 import { resourcesBySection } from "../../config/catalog/resources";
 import type { Row } from "../../types/table.types";
+import { Badge } from "../ui/DataTable";
+import { Dialog } from "../ui/Dialog";
+import { LineOrderEditor } from "./LineOrderEditor";
 
 const allResources = Object.values(resourcesBySection).flat();
 
@@ -54,6 +59,7 @@ interface CatalogWorkspaceProps {
   pageSize?: number;
   consultationMode?: boolean;
   view?: CatalogView;
+  extraTabs?: Array<{ key: string; title: string; content: ReactNode }>;
 }
 
 
@@ -63,9 +69,17 @@ export function CatalogWorkspace({
   pageSize,
   consultationMode = false,
   view,
+  extraTabs = [],
 }: CatalogWorkspaceProps) {
   const workspace =
     useCatalogWorkspace(section, view?.resourceKeys);
+  const [selectedExtraTab, setSelectedExtraTab] = useState<string | null>(null);
+  const [configuredLine, setConfiguredLine] = useState<Row | null>(null);
+  const [lineEditorBusy, setLineEditorBusy] = useState(false);
+  const orderedResources = view
+    ? view.resourceKeys.flatMap(key => workspace.resources.filter(item => item.key === key))
+    : workspace.resources;
+  const extraTab = extraTabs.find(tab => tab.key === selectedExtraTab);
 
   const resource =
     workspace.resource;
@@ -76,16 +90,22 @@ export function CatalogWorkspace({
   function openContextForm(action: CatalogContextAction, row?: Row) {
     const target = contextFormResource(action, allResources);
     if (!target || !adminActions) return;
+    if (target.key === "line-stations" && row) {
+      setConfiguredLine(row);
+      return;
+    }
     workspace.openForm(null, target, { ...action.initialValues, ...(row ? action.valuesFromRow?.(row) : {}) });
   }
 
   const columns =
     useMemo(
-      () =>
-        getCatalogColumns(
-          workspace.rows,
-        ),
-      [workspace.rows],
+      () => {
+        const inactiveLabel = resource ? view?.inactiveLabels?.[resource.key] : undefined;
+        return getCatalogColumns(workspace.rows).map(column => column.key === "activo" && inactiveLabel
+          ? { ...column, render: (row: Row) => <Badge value={row.activo === false ? inactiveLabel : row.activo} /> }
+          : column);
+      },
+      [workspace.rows, resource, view],
     );
 
 
@@ -157,12 +177,16 @@ export function CatalogWorkspace({
 
 
       <CatalogResourceTabs
-        resources={workspace.resources}
-        selected={workspace.selected}
-        onSelect={workspace.setSelected}
+        resources={[...orderedResources, ...extraTabs]}
+        selected={extraTab?.key ?? workspace.selected}
+        onSelect={key => {
+          if (extraTabs.some(tab => tab.key === key)) setSelectedExtraTab(key);
+          else { setSelectedExtraTab(null); workspace.setSelected(key); }
+        }}
       />
 
 
+      {extraTab ? extraTab.content : <>
       <Notice
         error={
           workspace.formOpen
@@ -196,6 +220,7 @@ export function CatalogWorkspace({
           onEdit={row => workspace.openForm(row)}
           onSaved={workspace.refresh}
         />
+      </>}
 
 
       {workspace.formOpen && workspace.formResource && (
@@ -219,6 +244,13 @@ export function CatalogWorkspace({
           onClose={workspace.closeForm}
         />
       )}
+
+      {configuredLine && <Dialog
+        title={`Configurar estaciones · ${String(configuredLine.codigo)} · ${String(configuredLine.nombre)}`}
+        onClose={() => { if (!lineEditorBusy) setConfiguredLine(null); }}>
+        <LineOrderEditor initialLineId={String(configuredLine.id_linea)} onSaved={workspace.refresh}
+          onBusyChange={setLineEditorBusy} />
+      </Dialog>}
 
     </section>
   );

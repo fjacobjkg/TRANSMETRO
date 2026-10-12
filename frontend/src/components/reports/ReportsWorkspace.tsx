@@ -1,4 +1,5 @@
 import { getReportColumns } from "./reportColumns";
+import { useState } from "react";
 import "../../styles/reports.css";
 import { Button } from "../ui/Button";
 import { DataTable, textValue } from "../ui/DataTable";
@@ -9,11 +10,15 @@ import { ReportFilters } from "./ReportFilters";
 import { ReportSummary } from "./ReportSummary";
 import { ReportTabs } from "./ReportTabs";
 import { useReportsWorkspace } from "../../hooks/reports/useReportsWorkspace";
+import { PaymentSimulationReport } from "./PaymentSimulationReport";
 
-export function ReportsWorkspace() {
+export function ReportsWorkspace({ showNetwork = true, paymentSimulation = false }: {
+  showNetwork?: boolean; paymentSimulation?: boolean;
+}) {
   const report = useReportsWorkspace();
+  const [showPayments, setShowPayments] = useState(false);
   const columns = getReportColumns(report.kind);
-  const actions = report.kind !== "network" && <Button variant="secondary" disabled={report.busy || !report.rows.length}
+  const actions = !showPayments && report.kind !== "network" && <Button variant="secondary" disabled={report.busy || !report.rows.length}
     onClick={() => downloadCsv("transmetro-" + report.kind + ".csv",
       columns.map((column) => column.label),
       report.rows.map((row) => columns.map((column) => textValue(row[column.key]))))}>
@@ -22,11 +27,17 @@ export function ReportsWorkspace() {
 
   return <section className="feature-page reports-page">
     <PageHeader eyebrow="INFORMACIÓN PARA DECIDIR" title="Consultas y reportes"
-      description="Filtra la información operativa y exporta los resultados que estás consultando."
+      description={paymentSimulation
+        ? "Filtra la información operativa y consulta los resultados generados por la operación."
+        : "Filtra la información operativa y exporta los resultados que estás consultando."}
       actions={actions} />
-    <ReportTabs selected={report.kind} onSelect={report.setKind} />
-    <Notice error={report.error} />
-    {report.kind === "network"
+    <ReportTabs selected={showPayments ? "payment-simulation" : report.kind}
+      onSelect={kind => {
+        setShowPayments(kind === "payment-simulation");
+        if (kind !== "payment-simulation") report.setKind(kind);
+      }} showNetwork={showNetwork} paymentSimulation={paymentSimulation} />
+    {!showPayments && <Notice error={report.error} />}
+    {showPayments ? <PaymentSimulationReport /> : report.kind === "network"
       ? <article className="panel"><LineVisualization /></article>
       : <>
         <ReportFilters kind={report.kind} filters={report.filters} lookups={report.lookups} busy={report.busy}

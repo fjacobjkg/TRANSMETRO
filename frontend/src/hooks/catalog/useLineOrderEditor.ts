@@ -3,7 +3,7 @@ import type { Row } from "../../types/table.types";
 import { getLineEditorData, saveLineStations } from "../../services/catalog/catalog.service";
 
 type Stop = { stationId: string; distance: string };
-export function useLineOrderEditor(onSaved: () => void) {
+export function useLineOrderEditor(onSaved: () => void, initialLineId = "") {
   const [lines, setLines] = useState<Row[]>([]);
   const [stations, setStations] = useState<Row[]>([]);
   const [lineId, setLineId] = useState("");
@@ -15,17 +15,20 @@ export function useLineOrderEditor(onSaved: () => void) {
   useEffect(() => {
     let live = true;
     void getLineEditorData().then((data) => {
-      if (live) { setLines(data.lines); setStations(data.stations); }
+      if (live) {
+        setLines(data.lines); setStations(data.stations);
+        if (initialLineId) selectLine(initialLineId, data.lines);
+      }
     }).catch((cause) => {
       if (live) setError(cause instanceof Error ? cause.message : "No se pudieron cargar las estaciones.");
     });
     return () => { live = false; };
-  }, []);
+  }, [initialLineId]);
 
-  function selectLine(id: string) {
+  function selectLine(id: string, availableLines = lines) {
     setLineId(id);
     setMessage("");
-    const line = lines.find((row) => String(row.id_linea) === id);
+    const line = availableLines.find((row) => String(row.id_linea) === id);
     setStops(((line?.estaciones ?? []) as Row[]).map((row) => ({
       stationId: String(row.estacion_id),
       distance: row.distancia_siguiente == null ? "" : String(row.distancia_siguiente),

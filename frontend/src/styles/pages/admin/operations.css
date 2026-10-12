@@ -1,14 +1,17 @@
-/* ========================================
-   ADMIN OPERATIONS
-======================================== */
-
-.admin-operations-page {
-  width: 100%;
-  min-width: 0;
+/* Read-only administrative monitoring, using the existing operations surfaces. */
+.admin-operations-page { width: 100%; min-width: 0; }
+.admin-operations-page .work-card { height: auto; align-self: start; width: 100%; }
+.admin-operations-page .metric-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-md);
+  margin-bottom: 1.25rem;
 }
-
-
-/*
-   Agregar aquí únicamente cambios
-   exclusivos de Administración.
-*/
+.admin-operations-page .trip-visit-badges { margin-top: 0; }
+.admin-operations-page .trip-visit-card .trip-visit-badges { margin-top: 0.85rem; }
+@media (max-width: 1000px) {
+  .admin-operations-page .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .admin-operations-page .metric-grid { grid-template-columns: 1fr; }
+}

@@ -3,6 +3,7 @@ import "../../styles/pages/admin/fleet.css";
 import {
   CatalogWorkspace,
 } from "../../components/catalog/CatalogWorkspace";
+import { fleetView } from "../../config/catalog/administration";
 
 
 export function AdminFleetPage() {
@@ -12,6 +13,7 @@ export function AdminFleetPage() {
       <CatalogWorkspace
         section="fleet"
         showRefreshAction={false}
+        view={fleetView}
       />
 
     </div>

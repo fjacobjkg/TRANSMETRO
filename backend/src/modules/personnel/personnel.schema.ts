@@ -11,3 +11,5 @@ export const pilotSchema = z.object({
 export const pilotUpdateSchema = pilotSchema.partial().extend({ active: z.boolean().optional() }).refine((value) => Object.keys(value).length > 0);
 export const assignmentSchema = z.object({ stationId: id });
 export const idParamSchema = z.coerce.number().int().positive();
+export const pilotBusSchema = z.object({ busId: id, startDate: z.iso.datetime({ offset: true }).optional() });
+export const busPilotSchema = z.object({ pilotId: id, startDate: z.iso.datetime({ offset: true }).optional() });

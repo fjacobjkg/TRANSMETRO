@@ -12,6 +12,7 @@ import { Notice } from "../ui/PageHeader";
 
 import {
   optionLabel,
+  catalogRelationAvailable,
   relations,
 } from "../../config/catalog/relations";
 
@@ -83,6 +84,7 @@ export function CatalogResourceForm({
         <Select
           required={field.required}
           value={value}
+          disabled={(resource.key === "pilot-bus" && field.name === "pilotId") || (resource.key === "bus-pilot" && field.name === "busId")}
           onChange={(event) =>
             onChange(
               field.name,
@@ -102,7 +104,7 @@ export function CatalogResourceForm({
             )}
 
 
-          {(lookups[field.name] ?? []).map(
+          {(lookups[field.name] ?? []).filter(row => catalogRelationAvailable(resource.key, field.name, row, values)).map(
             (row) => (
               <option
                 key={String(
@@ -243,10 +245,11 @@ export function CatalogResourceForm({
           field.kind ?? "text"
         }
         min={field.min}
+        max={field.max}
         minLength={field.minLength}
         step={
           field.kind === "number"
-            ? "1"
+            ? field.step ?? "1"
             : undefined
         }
         required={field.required}

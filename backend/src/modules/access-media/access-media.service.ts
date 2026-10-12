@@ -3,14 +3,18 @@ import { ensure } from "../../lib/domain-error.js";
 import { writeAudit } from "../audit/audit.service.js";
 
 export async function listMedia() {
-  return { items: await prisma.medio_acceso.findMany({ orderBy: { nombre: "asc" } }) };
+  const items = await prisma.medio_acceso.findMany({ orderBy: { nombre: "asc" },
+    include: { estaciones: { where: { activo: true, estacion: { activo: true } }, include: { estacion: true } } } });
+  return { items: items.map(item => ({ ...item, estaciones_habilitadas: item.estaciones.length })) };
 }
 
-export async function saveMedia(actorId: number, input: { name?: string | undefined; description?: string | null | undefined; active?: boolean | undefined }, id?: number | undefined) {
+export async function saveMedia(actorId: number, input: { name?: string | undefined; description?: string | null | undefined; active?: boolean | undefined; tariff?: string | undefined }, id?: number | undefined) {
   return prisma.$transaction(async (tx) => {
-    if (id !== undefined) ensure(await tx.medio_acceso.findUnique({ where: { id_medio_acceso: id } }), 404, "No se encontró el medio de acceso.");
-    else ensure(input.name, 400, "El nombre del medio es obligatorio.");
-    const data = { ...(input.name === undefined ? {} : { nombre: input.name }), ...(input.description === undefined ? {} : { descripcion: input.description }), ...(input.active === undefined ? {} : { activo: input.active }) };
+    if (id !== undefined) ensure(await tx.medio_acceso.findUnique({ where: { id_medio_acceso: id } }), 404, "No se encontró el medio de pago.");
+    else ensure(input.name && input.tariff, 400, "El nombre y la tarifa del medio son obligatorios.");
+    if (input.active === false && id !== undefined) await tx.estacion_medio_acceso.updateMany({
+      where: { medio_acceso_id: id }, data: { es_principal: false } });
+    const data = { ...(input.tariff === undefined ? {} : { tarifa: input.tariff }), ...(input.name === undefined ? {} : { nombre: input.name }), ...(input.description === undefined ? {} : { descripcion: input.description }), ...(input.active === undefined ? {} : { activo: input.active }) };
     const item = id === undefined ? await tx.medio_acceso.create({ data: { ...data, nombre: input.name! } }) : await tx.medio_acceso.update({ where: { id_medio_acceso: id }, data });
     await writeAudit(tx, { userId: actorId, action: id === undefined ? "CREAR" : "ACTUALIZAR", entity: "medio_acceso", entityId: item.id_medio_acceso, description: item.nombre });
     return item;
@@ -25,22 +29,34 @@ export async function listStationMedia(stationId: number) {
   }) };
 }
 
-export async function setStationMedia(actorId: number, stationId: number, mediaId: number, active: boolean) {
+export async function setStationMedia(actorId: number, stationId: number, mediaId: number, active: boolean, isPrincipal?: boolean) {
   return prisma.$transaction(async (tx) => {
+    // Lock the station, including when no membership exists yet, to serialize principal changes.
+    await tx.$queryRaw`SELECT id FROM estaciones WHERE id = ${stationId} FOR UPDATE`;
     const [station, media] = await Promise.all([
       tx.estacion.findUnique({ where: { id_estacion: stationId } }),
       tx.medio_acceso.findUnique({ where: { id_medio_acceso: mediaId } }),
     ]);
     ensure(station?.activo, 400, "Selecciona una estación activa.");
-    ensure(media, 404, "No se encontró el medio de acceso.");
+    ensure(media, 404, "No se encontró el medio de pago.");
     ensure(media.activo || !active, 400, "Selecciona un medio activo.");
+    ensure(active || !isPrincipal, 400, "Un medio deshabilitado no puede ser principal.");
     const current = await tx.estacion_medio_acceso.findUnique({ where: { estacion_id_medio_acceso_id: { estacion_id: stationId, medio_acceso_id: mediaId } } });
+    const principal = active && (isPrincipal ?? current?.es_principal ?? false);
+    if (principal) await tx.estacion_medio_acceso.updateMany({ where: { estacion_id: stationId, es_principal: true }, data: { es_principal: false } });
     const item = current
-      ? await tx.estacion_medio_acceso.update({ where: { id_estacion_medio_acceso: current.id_estacion_medio_acceso }, data: { activo: active } })
-      : await tx.estacion_medio_acceso.create({ data: { estacion_id: stationId, medio_acceso_id: mediaId, activo: active } });
+      ? await tx.estacion_medio_acceso.update({ where: { id_estacion_medio_acceso: current.id_estacion_medio_acceso }, data: { activo: active, es_principal: principal } })
+      : await tx.estacion_medio_acceso.create({ data: { estacion_id: stationId, medio_acceso_id: mediaId, activo: active, es_principal: principal } });
+    if (isPrincipal === undefined) {
+      const enabled = await tx.estacion_medio_acceso.findMany({ where: { estacion_id: stationId, activo: true, medio_acceso: { activo: true } } });
+      if (enabled.length === 1 && !enabled[0]!.es_principal) {
+        await tx.estacion_medio_acceso.update({ where: { id_estacion_medio_acceso: enabled[0]!.id_estacion_medio_acceso }, data: { es_principal: true } });
+        if (enabled[0]!.id_estacion_medio_acceso === item.id_estacion_medio_acceso) item.es_principal = true;
+      }
+    }
     await writeAudit(tx, { userId: actorId, action: active ? "HABILITAR_MEDIO" : "DESHABILITAR_MEDIO", entity: "estacion_medio_acceso", entityId: item.id_estacion_medio_acceso, description: `${station.codigo} · ${media.nombre}` });
     return item;
-  });
+  }, { isolationLevel: "Serializable" });
 }
 
 export async function listAccessCounts(filters: { stationId?: number | undefined; stationIds?: number[] | undefined; actorId?: number | undefined; from?: string | undefined; to?: string | undefined }) {

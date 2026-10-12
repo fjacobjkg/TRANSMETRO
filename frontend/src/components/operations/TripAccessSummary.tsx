@@ -1,4 +1,4 @@
-import { ACCESS_REFERENCE_MEDIUM, ACCESS_REFERENCE_VALUE } from "../../config/access-reference";
+import { paymentCurrency as currency } from "../../utils/payment-simulation-report";
 import { useTripAccessSummary } from "../../hooks/operations/useTripAccessSummary";
 import { tripAccessSummary } from "../../utils/trip-access-summary";
 import { DataTable, type Column } from "../ui/DataTable";
@@ -6,21 +6,20 @@ import { Notice } from "../ui/PageHeader";
 import { Select } from "../ui/Select";
 import { OperationCard } from "./OperationCard";
 
-const currency = (value: number) => `Q${value.toLocaleString("es-GT", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-
 export function TripAccessSummary() {
   const workspace = useTripAccessSummary();
-  const summary = workspace.trip ? tripAccessSummary(workspace.trip, ACCESS_REFERENCE_VALUE) : null;
+  const summary = workspace.trip ? tripAccessSummary(workspace.trip) : null;
   const columns: Column[] = [
     { key: "name", label: "Estación" },
     { key: "accesses", label: "Accesos estimados" },
-    { key: "medium", label: "Medio de acceso" },
-    { key: "referenceTotal", label: "Recaudación estimada", render: row => currency(Number(row.referenceTotal)) },
+    { key: "medium", label: "Medio de pago", render: row => String(row.medium ?? row.configurationIssue ?? "Sin medio de pago principal") },
+    { key: "tariff", label: "Tarifa", render: row => row.tariff == null ? "—" : currency(String(row.tariff)) },
+    { key: "referenceTotal", label: "Recaudación estimada", render: row => currency(row.referenceTotal as string | null) },
   ];
   return (
     <OperationCard eyebrow="RESUMEN POR RECORRIDO" title="Resumen de recorridos" icon="▤" className="trip-access-summary-card">
       <div className="work-form">
-        <p className="field-help">Consulta los accesos registrados durante el recorrido y su recaudación estimada con Tarjeta Ciudadana.</p>
+        <p className="field-help">Consulta los accesos estimados después del molinete y su recaudación según el medio principal y la tarifa actual de cada estación.</p>
         <Notice error={workspace.error} />
         <div className="access-summary-controls">
         <label>
@@ -43,15 +42,16 @@ export function TripAccessSummary() {
                 <div><strong>{summary.stationsServed}</strong><span>Estaciones atendidas</span></div>
                 <div><strong>{currency(summary.referenceTotal)}</strong><span>Recaudación estimada</span></div>
               </div>
-              <p className="field-help">{ACCESS_REFERENCE_MEDIUM} · {currency(ACCESS_REFERENCE_VALUE)} por acceso.</p>
+              <p className="field-help">{summary.medium}</p>
+              {summary.missingPayments > 0 && <p className="notice notice-warning">{summary.missingPayments} estaciones sin configuración principal válida. La recaudación disponible es parcial.</p>}
             </div>
             <span className="section-kicker">DETALLE POR ESTACIÓN</span>
-            <DataTable rows={summary.stations.map(station => ({ ...station, id: station.visitId, medium: ACCESS_REFERENCE_MEDIUM }))}
+            <DataTable rows={summary.stations.map(station => ({ ...station, id: station.visitId }))}
               columns={columns} showSearch={summary.stations.length > 5} />
             <div className="visit-summary-box">
               <span className="section-kicker">RESUMEN DEL RECORRIDO</span>
               <div className="access-summary-total">
-                <div><strong>{ACCESS_REFERENCE_MEDIUM}</strong><span>{summary.accesses} accesos estimados</span></div>
+                <div><strong>{summary.medium}</strong><span>{summary.accesses} accesos estimados</span></div>
                 <div><span>Recaudación estimada</span><strong>{currency(summary.referenceTotal)}</strong></div>
               </div>
             </div>

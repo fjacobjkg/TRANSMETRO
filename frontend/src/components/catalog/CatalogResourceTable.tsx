@@ -106,6 +106,8 @@ export function CatalogResourceTable({
 
       </div>
 
+      {resource.helpText && <p className="muted">{resource.helpText}</p>}
+
 
       {resource.key ===
         "line-stations" &&

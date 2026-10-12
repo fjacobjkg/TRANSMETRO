@@ -76,6 +76,7 @@ export async function getFleetReport(filters: Filters) {
     include: {
       asignaciones_linea: { orderBy: { fecha_inicio: "desc" }, take: 100, include: { linea: true } },
       asignaciones_parqueo: { orderBy: { fecha_inicio: "desc" }, take: 100, include: { parqueo: { include: { estacion: true } } } },
+      asignaciones_piloto: { orderBy: { fecha_inicio: "desc" }, take: 100, include: { piloto: true } },
     },
   });
   const items = buses.filter((bus) => filters.lineId === undefined || bus.asignaciones_linea.some((assignment) => assignment.linea_id === filters.lineId));

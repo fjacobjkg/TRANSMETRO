@@ -10,12 +10,12 @@ accessMediaRouter.get("/media", requireRole("ADMIN", "ADMINISTRATIVO"), async (_
 });
 accessMediaRouter.post("/media", requireRole("ADMIN"), async (request, response, next) => {
   const body = mediaSchema.safeParse(request.body);
-  if (!body.success) { response.status(400).json({ message: "Datos del medio inválidos.", issues: body.error.issues }); return; }
+  if (!body.success) { response.status(400).json({ message: body.error.issues[0]?.message ?? "Datos del medio de pago inválidos.", issues: body.error.issues }); return; }
   try { response.status(201).json({ item: await saveMedia(getAuthenticatedUser(response).id, body.data) }); } catch (error) { next(error); }
 });
 accessMediaRouter.patch("/media/:id", requireRole("ADMIN"), async (request, response, next) => {
   const id = idParamSchema.safeParse(request.params.id); const body = mediaUpdateSchema.safeParse(request.body);
-  if (!id.success || !body.success) { response.status(400).json({ message: "Actualización inválida." }); return; }
+  if (!id.success || !body.success) { response.status(400).json({ message: !body.success ? body.error.issues[0]?.message : "Identificador de medio de pago inválido." }); return; }
   try { response.json({ item: await saveMedia(getAuthenticatedUser(response).id, body.data, id.data) }); } catch (error) { next(error); }
 });
 accessMediaRouter.get("/stations/:stationId/media", requireRole("ADMIN", "ADMINISTRATIVO", "OPERADOR_ESTACION"), async (request, response, next) => {
@@ -27,8 +27,8 @@ accessMediaRouter.get("/stations/:stationId/media", requireRole("ADMIN", "ADMINI
 });
 accessMediaRouter.put("/stations/:stationId/media", requireRole("ADMIN"), async (request, response, next) => {
   const stationId = idParamSchema.safeParse(request.params.stationId); const body = stationMediaSchema.safeParse(request.body);
-  if (!stationId.success || !body.success) { response.status(400).json({ message: "Habilitación de medio inválida." }); return; }
-  try { response.json({ item: await setStationMedia(getAuthenticatedUser(response).id, stationId.data, body.data.mediaId, body.data.active ?? true) }); } catch (error) { next(error); }
+  if (!stationId.success || !body.success) { response.status(400).json({ message: !body.success ? body.error.issues[0]?.message : "Estación inválida." }); return; }
+  try { response.json({ item: await setStationMedia(getAuthenticatedUser(response).id, stationId.data, body.data.mediaId, body.data.active ?? true, body.data.isPrincipal) }); } catch (error) { next(error); }
 });
 accessMediaRouter.get("/access-counts", requireRole("ADMIN", "ADMINISTRATIVO", "OPERADOR_ESTACION"), async (request, response, next) => {
   const station = request.query.stationId === undefined ? undefined : idParamSchema.safeParse(request.query.stationId);

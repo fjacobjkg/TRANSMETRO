@@ -10,6 +10,7 @@ const fieldToColumn: Record<string, string> = {
   name: "nombre", code: "codigo", plate: "placa", capacity: "capacidad_maxima",
   municipalityId: "municipalidad_id", stationId: "estacion_id", residence: "residencia",
   education: "informacion_educativa", phone: "telefono", email: "correo", description: "descripcion",
+  tariff: "tarifa",
 };
 function rowId(row: Row) {
   return Object.entries(row).find(([key]) => key.startsWith("id_"))?.[1];
@@ -79,7 +80,7 @@ export function useCatalogWorkspace(section: string, resourceKeys?: string[]) {
   }
   const formFields: Field[] = [
     ...(target?.fields ?? []).filter((field) => !editing || !["parkingId", "stationId", "code"].includes(field.name)),
-    ...(editing ? [{ name: "active", label: "Estado", kind: "select" as const,
+    ...(editing && !target?.fields?.some(field => field.name === "active") ? [{ name: "active", label: "Estado", kind: "select" as const,
       options: [{ label: "Activo", value: "true" }, { label: "Inactivo", value: "false" }] }] : []),
   ];
 
@@ -96,7 +97,7 @@ export function useCatalogWorkspace(section: string, resourceKeys?: string[]) {
           .filter((field) => !field.pathOnly && (Boolean(values[field.name]) ||
             Boolean(editing && !field.required && ["phone", "email", "description", "education"].includes(field.name))))
           .map((field) => [field.name, !values[field.name] ? null
-            : field.name === "active" ? values.active === "true"
+            : ["active", "isPrincipal"].includes(field.name) ? values[field.name] === "true"
               : field.kind === "number" || relations[field.name] ? Number(values[field.name]) : values[field.name]]));
       const path = editing ? target.path.split("?")[0] + "/" + rowId(editing)
         : target.writePath?.(values) ?? target.path;

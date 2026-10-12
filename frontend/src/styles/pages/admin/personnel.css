@@ -61,26 +61,7 @@
 }
 
 
-/* ========================================
-   RESOURCE TABS
-======================================== */
-
-.admin-personnel-page .resource-tabs {
-  gap: 0.55rem;
-
-  margin-bottom: 1.25rem;
-}
-
-
-.admin-personnel-page .resource-tabs button {
-  min-height: 2.65rem;
-
-  padding:
-    0.65rem 0.9rem;
-
-  font-size: 0.78rem;
-  font-weight: 650;
-}
+/* Navigation dimensions are shared with Cuentas y permisos. */
 
 
 /* ========================================
@@ -279,18 +260,6 @@
 
   .admin-personnel-page .page-heading p {
     font-size: 0.82rem;
-  }
-
-
-  .admin-personnel-page .resource-tabs {
-    gap: 0.45rem;
-  }
-
-
-  .admin-personnel-page .resource-tabs button {
-    min-height: 2.5rem;
-
-    font-size: 0.74rem;
   }
 
 

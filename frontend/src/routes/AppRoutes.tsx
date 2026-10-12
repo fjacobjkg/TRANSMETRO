@@ -15,6 +15,7 @@ import { AdminDashboardPage } from "../pages/admin/DashboardPage";
 import { AdminUsersPage } from "../pages/admin/UsersPage";
 import { AdminTransportPage } from "../pages/admin/TransportPage";
 import { AdminPersonnelPage } from "../pages/admin/PersonnelPage";
+import { AdminSecurityAccessPage } from "../pages/admin/SecurityAccessPage";
 import { AdminFleetPage } from "../pages/admin/FleetPage";
 import { AdminOperationsPage } from "../pages/admin/OperationsPage";
 import { AdminReportsPage } from "../pages/admin/ReportsPage";
@@ -86,6 +87,8 @@ export function AppRoutes() {
             path="personnel"
             element={<AdminPersonnelPage />}
           />
+
+          <Route path="security-access" element={<AdminSecurityAccessPage />} />
 
           <Route
             path="fleet"

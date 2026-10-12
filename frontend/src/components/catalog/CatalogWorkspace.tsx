@@ -32,6 +32,11 @@ import {
 import {
   useCatalogWorkspace,
 } from "../../hooks/catalog/useCatalogWorkspace";
+import { contextFormResource, type CatalogContextAction, type CatalogView } from "../../config/catalog/administration";
+import { resourcesBySection } from "../../config/catalog/resources";
+import type { Row } from "../../types/table.types";
+
+const allResources = Object.values(resourcesBySection).flat();
 
 
 const titles: Record<string, string> = {
@@ -48,6 +53,7 @@ interface CatalogWorkspaceProps {
   showRefreshAction?: boolean;
   pageSize?: number;
   consultationMode?: boolean;
+  view?: CatalogView;
 }
 
 
@@ -56,12 +62,22 @@ export function CatalogWorkspace({
   showRefreshAction = true,
   pageSize,
   consultationMode = false,
+  view,
 }: CatalogWorkspaceProps) {
   const workspace =
-    useCatalogWorkspace(section);
+    useCatalogWorkspace(section, view?.resourceKeys);
 
   const resource =
     workspace.resource;
+  const adminActions = workspace.user?.role === "ADMIN";
+  const createAction = resource ? view?.createActions?.[resource.key] : undefined;
+  const contextualActions = resource ? view?.rowActions[resource.key] : undefined;
+
+  function openContextForm(action: CatalogContextAction, row?: Row) {
+    const target = contextFormResource(action, allResources);
+    if (!target || !adminActions) return;
+    workspace.openForm(null, target, { ...action.initialValues, ...(row ? action.valuesFromRow?.(row) : {}) });
+  }
 
   const columns =
     useMemo(
@@ -93,10 +109,10 @@ export function CatalogWorkspace({
       <PageHeader
         eyebrow="GESTIÓN CENTRALIZADA"
         title={
-          titles[section] ??
+          view?.title ?? titles[section] ??
           "Catálogo"
         }
-        description="Consulta registros y conserva la trazabilidad de cada cambio."
+        description={view?.description ?? "Consulta registros y conserva la trazabilidad de cada cambio."}
         actions={
           showRefreshAction
             ? (
@@ -168,17 +184,23 @@ export function CatalogWorkspace({
             "ADMINISTRATIVO"
           }
           pageSize={pageSize}
+          canCreate={workspace.canWrite || Boolean(adminActions && createAction)}
+          createLabel={createAction ? String(createAction.label) : view?.createLabels?.[resource.key]}
+          rowActions={adminActions && contextualActions ? row => contextualActions.map(action => <Button
+            key={action.resourceKey} variant="quiet" disabled={workspace.busy} onClick={() => openContextForm(action, row)}>
+            {typeof action.label === "function" ? action.label(row) : action.label}
+          </Button>) : undefined}
           onCreate={() =>
-            workspace.openForm()
+            createAction ? openContextForm(createAction) : workspace.openForm()
           }
-          onEdit={workspace.openForm}
+          onEdit={row => workspace.openForm(row)}
           onSaved={workspace.refresh}
         />
 
 
-      {workspace.formOpen && (
+      {workspace.formOpen && workspace.formResource && (
         <CatalogResourceForm
-          resource={resource}
+          resource={workspace.formResource}
           fields={workspace.formFields}
           values={workspace.values}
           lookups={workspace.lookups}
@@ -194,11 +216,7 @@ export function CatalogWorkspace({
             )
           }
           onSubmit={workspace.submit}
-          onClose={() => {
-            if (!workspace.busy) {
-              workspace.setFormOpen(false);
-            }
-          }}
+          onClose={workspace.closeForm}
         />
       )}
 

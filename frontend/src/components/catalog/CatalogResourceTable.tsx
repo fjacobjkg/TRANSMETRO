@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import {
   Button,
 } from "../ui/Button";
@@ -40,6 +41,9 @@ interface CatalogResourceTableProps {
   adminReadOnly: boolean;
 
   pageSize?: number;
+  canCreate?: boolean;
+  createLabel?: string;
+  rowActions?: (row: Row) => ReactNode;
 
   onCreate: () => void;
   onEdit: (row: Row) => void;
@@ -55,6 +59,9 @@ export function CatalogResourceTable({
   canWrite,
   adminReadOnly,
   pageSize,
+  canCreate = canWrite,
+  createLabel,
+  rowActions,
   onCreate,
   onEdit,
   onSaved,
@@ -82,18 +89,18 @@ export function CatalogResourceTable({
         </div>
 
 
-        {canWrite &&
+        {canCreate &&
           resource.key !==
             "line-stations" && (
           <Button
             variant="primary"
             onClick={onCreate}
           >
-            {resource.method ===
+            {createLabel ?? (resource.method ===
               "POST" &&
             !resource.writePath
               ? "＋ Crear registro"
-              : "Configurar"}
+              : "Configurar")}
           </Button>
         )}
 
@@ -113,8 +120,10 @@ export function CatalogResourceTable({
           loading={loading}
           pageSize={pageSize}
           actions={
-            canEditRows
+            canEditRows || rowActions
               ? (row) => (
+                  <>
+                  {canEditRows &&
                   <Button
                     variant="quiet"
                     onClick={() =>
@@ -122,7 +131,9 @@ export function CatalogResourceTable({
                     }
                   >
                     Editar
-                  </Button>
+                  </Button>}
+                  {rowActions?.(row)}
+                  </>
                 )
               : undefined
           }

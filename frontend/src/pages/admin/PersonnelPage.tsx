@@ -1,4 +1,5 @@
 import "../../styles/pages/admin/personnel.css";
+import { personnelView } from "../../config/catalog/administration";
 
 import {
   CatalogWorkspace,
@@ -11,6 +12,7 @@ export function AdminPersonnelPage() {
 
       <CatalogWorkspace
         section="personnel"
+        view={personnelView}
         showRefreshAction={false}
       />
 

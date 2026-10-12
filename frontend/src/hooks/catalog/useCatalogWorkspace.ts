@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import { useAuth } from "../AuthContext";
 import type { Row } from "../../types/table.types";
 import { resourcesBySection } from "../../config/catalog/resources";
-import type { Field } from "../../types/catalog.types";
+import type { Field, Resource } from "../../types/catalog.types";
 import { relations } from "../../config/catalog/relations";
 import { getCatalogLookups, getCatalogRows, saveCatalogEntry } from "../../services/catalog/catalog.service";
 
@@ -15,9 +15,10 @@ function rowId(row: Row) {
   return Object.entries(row).find(([key]) => key.startsWith("id_"))?.[1];
 }
 
-export function useCatalogWorkspace(section: string) {
+export function useCatalogWorkspace(section: string, resourceKeys?: string[]) {
   const { user } = useAuth();
-  const resources = resourcesBySection[section] ?? [];
+  const resources = useMemo(() => (resourcesBySection[section] ?? [])
+    .filter(resource => !resourceKeys || resourceKeys.includes(resource.key)), [section, resourceKeys]);
   const [selected, setSelected] = useState(resources[0]?.key ?? "");
   const resource = resources.find((item) => item.key === selected) ?? resources[0];
   const [rows, setRows] = useState<Row[]>([]);
@@ -28,6 +29,8 @@ export function useCatalogWorkspace(section: string) {
   const [busy, setBusy] = useState(false);
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Row | null>(null);
+  const [formResource, setFormResource] = useState<Resource | null>(null);
+  const target = formResource ?? resource;
 
   const load = useCallback(async (signal?: AbortSignal) => {
     if (!resource) return;
@@ -47,55 +50,59 @@ export function useCatalogWorkspace(section: string) {
   }, [resource]);
 
   useEffect(() => {
-    setRows([]); setValues({}); setEditing(null); setFormOpen(false); setMessage("");
+    setRows([]); setValues({}); setEditing(null); setFormOpen(false); setFormResource(null); setMessage("");
     const controller = new AbortController();
     void load(controller.signal);
     return () => controller.abort();
   }, [load]);
 
   useEffect(() => {
-    if (!resource) return;
+    if (!target) return;
     const controller = new AbortController();
-    void getCatalogLookups(resource, controller.signal).then(setLookups)
+    setLookups({});
+    void getCatalogLookups(target, controller.signal).then(setLookups)
       .catch((cause) => { if (!controller.signal.aborted) setError(cause.message); });
     return () => controller.abort();
-  }, [resource]);
+  }, [target]);
 
 
   const canWrite = user?.role === "ADMIN" && Boolean(resource?.method);
-  function openForm(row: Row | null = null) {
+  function openForm(row: Row | null = null, formTarget = resource, initialValues: Record<string, string> = {}) {
+    if (!formTarget?.method || user?.role !== "ADMIN") return;
+    setFormResource(formTarget);
     setEditing(row);
-    setValues(row ? { ...Object.fromEntries((resource?.fields ?? []).map((field) => [
+    setValues(row ? { ...Object.fromEntries((formTarget.fields ?? []).map((field) => [
       field.name, String(row[fieldToColumn[field.name] ?? field.name] ?? ""),
-    ])), active: String(row.activo) } : {});
+    ])), active: String(row.activo) } : initialValues);
     setError("");
     setFormOpen(true);
   }
   const formFields: Field[] = [
-    ...(resource?.fields ?? []).filter((field) => !editing || !["parkingId", "stationId", "code"].includes(field.name)),
+    ...(target?.fields ?? []).filter((field) => !editing || !["parkingId", "stationId", "code"].includes(field.name)),
     ...(editing ? [{ name: "active", label: "Estado", kind: "select" as const,
       options: [{ label: "Activo", value: "true" }, { label: "Inactivo", value: "false" }] }] : []),
   ];
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!resource) return;
+    if (!target?.method || user?.role !== "ADMIN") return;
     setBusy(true); setError(""); setMessage("");
     try {
-      if (resource.key === "update-user" && !values.role && !values.active) {
+      if (target.key === "update-user" && !values.role && !values.active) {
         throw new Error("Selecciona un cambio de rol o estado.");
       }
-      const body = resource.body && !editing ? resource.body(values)
+      const body = target.body && !editing ? target.body(values)
         : Object.fromEntries(formFields
           .filter((field) => !field.pathOnly && (Boolean(values[field.name]) ||
             Boolean(editing && !field.required && ["phone", "email", "description", "education"].includes(field.name))))
           .map((field) => [field.name, !values[field.name] ? null
             : field.name === "active" ? values.active === "true"
               : field.kind === "number" || relations[field.name] ? Number(values[field.name]) : values[field.name]]));
-      const path = editing ? resource.path.split("?")[0] + "/" + rowId(editing)
-        : resource.writePath?.(values) ?? resource.path;
-      await saveCatalogEntry(path, editing ? "PATCH" : resource.method, body);
+      const path = editing ? target.path.split("?")[0] + "/" + rowId(editing)
+        : target.writePath?.(values) ?? target.path;
+      await saveCatalogEntry(path, editing ? "PATCH" : target.method, body);
       setFormOpen(false);
+      setFormResource(null);
       await load();
       setMessage("Cambios guardados. La operación quedó registrada en la bitácora.");
     } catch (cause) {
@@ -105,7 +112,8 @@ export function useCatalogWorkspace(section: string) {
 
   return {
     user, resources, resource, selected, setSelected, rows, values, setValues, lookups,
-    error, message, busy, formOpen, setFormOpen, editing, formFields, canWrite, openForm, submit,
+    error, message, busy, formOpen, setFormOpen, editing, formFields, formResource: target, canWrite, openForm, submit,
+    closeForm: () => { if (!busy) { setFormOpen(false); setFormResource(null); } },
     refresh: () => void load(),
   };
 }

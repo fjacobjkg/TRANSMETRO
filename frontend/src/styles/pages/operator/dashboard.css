@@ -286,6 +286,116 @@ li > span {
 
 
 /* ========================================
+   OPERATOR - ASSIGNED STATIONS
+======================================== */
+
+.operator-dashboard
+.operator-station-list {
+  display: grid;
+
+  gap: 0.7rem;
+
+  margin:
+    1rem 0
+    0;
+
+  padding: 0;
+
+  list-style: none;
+}
+
+
+.operator-dashboard
+.operator-station-list li {
+  display: flex;
+
+  align-items: center;
+
+  gap: 0.65rem;
+
+  color:
+    var(--color-ink);
+
+  font-size: 0.78rem;
+  font-weight: 650;
+
+  line-height: 1.4;
+}
+
+
+.operator-dashboard
+.operator-station-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+
+  flex:
+    0 0 0.5rem;
+
+  border-radius: 50%;
+
+  background:
+    var(--color-accent);
+}
+
+
+.operator-dashboard
+.operator-stations-fallback {
+  margin:
+    1rem 0
+    0;
+
+  color:
+    var(--color-muted);
+
+  font-size: 0.76rem;
+
+  line-height: 1.55;
+}
+
+
+/* ========================================
+   AUTOMATIC ASSISTANCE
+======================================== */
+
+.operator-dashboard
+.operator-assistance-note {
+  display: grid;
+
+  gap: 0.35rem;
+
+  margin-top: 1.25rem;
+
+  padding-top: 1rem;
+
+  border-top:
+    1px solid
+    rgba(25, 70, 82, 0.12);
+}
+
+
+.operator-dashboard
+.operator-assistance-note strong {
+  color:
+    var(--color-brand);
+
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+
+.operator-dashboard
+.operator-assistance-note p {
+  margin: 0;
+
+  color:
+    var(--color-muted);
+
+  font-size: 0.71rem;
+
+  line-height: 1.55;
+}
+
+/* ========================================
    TABLET
 ======================================== */
 

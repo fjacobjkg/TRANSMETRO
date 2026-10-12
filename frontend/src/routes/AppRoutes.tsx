@@ -30,6 +30,8 @@ import { OperatorDashboardPage } from "../pages/operator/DashboardPage";
 import { OperatorOperationsPage } from "../pages/operator/OperationsPage";
 
 
+import { OperatorAccessCountsPage } from "../pages/operator/OperatorAccessCountsPage";
+
 export function AppRoutes() {
   return (
     <Routes>
@@ -231,6 +233,8 @@ export function AppRoutes() {
         <OperatorOperationsPage />
       }
     />
+
+    <Route path="access-counts" element={<OperatorAccessCountsPage />} />
 
     <Route
       path="*"

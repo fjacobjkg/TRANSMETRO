@@ -1,14 +1,18 @@
 import { apiRequest } from "../http.client";
 import type { AccessCount, Line, MediaOption, Trip } from "../../types/operations.types";
 const guatemalaDate = () => new Intl.DateTimeFormat("en-CA", { timeZone: "America/Guatemala" }).format(new Date());
+export async function getOperationLines() {
+  const response = await apiRequest<{ items: Line[] }>("/api/operations/lines");
+  return response.items;
+}
 export async function getOperationsData() {
   const [lineResponse, tripResponse, openResponse] = await Promise.all([
-    apiRequest<{ items: Line[] }>("/api/operations/lines"),
+    getOperationLines(),
     apiRequest<{ items: Trip[] }>("/api/operations/trips?page=1&pageSize=50"),
     apiRequest<{ items: Trip[] }>("/api/operations/trips?state=EN_CURSO&pageSize=100"),
   ]);
   const openIds = new Set(openResponse.items.map((trip) => String(trip.id_recorrido)));
-  return { lines: lineResponse.items,
+  return { lines: lineResponse,
     trips: [...openResponse.items, ...tripResponse.items.filter((trip) => !openIds.has(String(trip.id_recorrido)))],
     openTrips: openResponse.items };
 }

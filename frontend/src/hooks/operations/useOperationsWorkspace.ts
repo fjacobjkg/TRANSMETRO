@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { useAuth } from "../AuthContext";
-import { closeTrip, createTrip, createVisit, getOperationsData, getStationMedia, getTodayAccessCounts, saveAccessCount } from "../../services/operations/operations.service";
-import type { AccessCount, Line, MediaOption, Trip } from "../../types/operations.types";
+import { closeTrip, createTrip, createVisit, getOperationsData } from "../../services/operations/operations.service";
+import type { Line, Trip } from "../../types/operations.types";
 const getError = (error: unknown, fallback: string) => error instanceof Error ? error.message : fallback;
 
 export function useOperationsWorkspace() {
@@ -13,11 +13,6 @@ export function useOperationsWorkspace() {
   const [selectedTrip, setSelectedTrip] = useState("");
   const [occupancy, setOccupancy] = useState("");
   const [demand, setDemand] = useState("");
-  const [stationId, setStationId] = useState(user?.stationIds[0]?.toString() ?? "");
-  const [media, setMedia] = useState<MediaOption[]>([]);
-  const [accessCounts, setAccessCounts] = useState<AccessCount[]>([]);
-  const [selectedMedia, setSelectedMedia] = useState("");
-  const [quantity, setQuantity] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -43,21 +38,6 @@ export function useOperationsWorkspace() {
   const tripLine = lines.find((item) => item.codigo === activeTrip?.linea.codigo);
   const nextStation = tripLine?.estaciones.slice().sort((a, b) => a.orden - b.orden)[activeTrip?.visitas.length ?? 0];
 
-  useEffect(() => {
-    setSelectedMedia("");
-    if (!stationId) { setMedia([]); return; }
-    let cancelled = false;
-    void getStationMedia(stationId).then((items) => { if (!cancelled) setMedia(items); })
-      .catch(() => { if (!cancelled) setMedia([]); });
-    return () => { cancelled = true; };
-  }, [stationId]);
-
-  const loadAccessCounts = useCallback(async () => {
-    if (!stationId) { setAccessCounts([]); return; }
-    setAccessCounts(await getTodayAccessCounts(stationId));
-  }, [stationId]);
-  useEffect(() => { void loadAccessCounts().catch(() => setAccessCounts([])); }, [loadAccessCounts]);
-
   const perform = useCallback(async (action: () => Promise<unknown>, success: string) => {
     setBusy(true); setError(""); setMessage("");
     try { await action(); await load(); setMessage(success); return true; }
@@ -78,34 +58,21 @@ export function useOperationsWorkspace() {
         if (saved) { setOccupancy(""); setDemand(""); }
       });
   }
-  function recordCount(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!selectedMedia || !user) return;
-    const existing = accessCounts.find((entry) =>
-      entry.estacion_medio_acceso_id === Number(selectedMedia) && entry.usuario_id === user.id);
-    void perform(async () => {
-      setAccessCounts(await saveAccessCount({ selectedMedia: Number(selectedMedia), quantity: Number(quantity), stationId, existing }));
-    }, existing ? "Conteo corregido; el cambio quedó registrado en la bitácora." : "Conteo guardado en la bitácora.")
-      .then((saved) => { if (saved) setQuantity(""); });
-  }
   function cancelSelectedTrip() {
     if (!cancelTrip) return;
     void perform(() => closeTrip(cancelTrip.id_recorrido), "Recorrido cancelado.")
       .then((saved) => { if (saved) setCancelTrip(null); });
   }
 
-  const stationOptions = useMemo(() => user?.role === "OPERADOR_ESTACION" ? user.stationIds : [], [user]);
-  const stationNames = useMemo(() => new Map(lines.flatMap((item) =>
-    item.estaciones.map((entry) => [entry.estacion_id, entry.estacion.nombre] as const))), [lines]);
   const canRecordNext = Boolean(nextStation &&
     (user?.role === "ADMIN" || user?.stationIds.includes(nextStation.estacion_id)));
 
   return {
-    user, lines, trips, line, activeTrip, nextStation, stationOptions, stationNames, media, accessCounts,
+    user, lines, trips, line, activeTrip, nextStation,
     selectedLine, setSelectedLine, selectedBus, setSelectedBus, selectedTrip, setSelectedTrip,
-    stationId, setStationId, selectedMedia, setSelectedMedia, occupancy, setOccupancy, demand, setDemand,
-    quantity, setQuantity, message, error, busy, cancelTrip, setCancelTrip, canRecordNext,
-    startTrip, recordVisit, recordCount, cancelSelectedTrip,
+    occupancy, setOccupancy, demand, setDemand,
+    message, error, busy, cancelTrip, setCancelTrip, canRecordNext,
+    startTrip, recordVisit, cancelSelectedTrip,
     refresh: () => void load().catch((cause) => setError(getError(cause, "No se pudo actualizar la operación."))),
   };
 }

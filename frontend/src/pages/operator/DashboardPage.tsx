@@ -1,4 +1,9 @@
 import {
+  useEffect,
+  useState,
+} from "react";
+
+import {
   useAuth,
 } from "../../hooks/AuthContext";
 
@@ -10,6 +15,10 @@ import {
   PageHeader,
 } from "../../components/ui/PageHeader";
 
+import {
+  getOperationsData,
+} from "../../services/operations/operations.service";
+
 import "../../styles/pages/operator/dashboard.css";
 
 
@@ -19,55 +28,227 @@ export function OperatorDashboardPage() {
   } = useAuth();
 
 
+  const [
+    stationNames,
+    setStationNames,
+  ] = useState<string[]>([]);
+
+  const [
+    activeTrips,
+    setActiveTrips,
+  ] = useState(0);
+
+  const [
+    availableBuses,
+    setAvailableBuses,
+  ] = useState(0);
+
+
+  const stationCount =
+    user?.stationIds?.length ?? 0;
+
+
+  /* ========================================
+     INFORMACIÓN OPERATIVA
+  ======================================== */
+
+  useEffect(() => {
+    if (
+      !user ||
+      user.role !== "OPERADOR_ESTACION"
+    ) {
+      setStationNames([]);
+      setActiveTrips(0);
+      setAvailableBuses(0);
+      return;
+    }
+
+
+    const assignedStationIds =
+      user.stationIds ?? [];
+
+    let cancelled = false;
+
+
+    async function loadDashboard() {
+      try {
+        const data =
+          await getOperationsData();
+
+
+        /* ====================================
+           ESTACIONES ASIGNADAS
+        ==================================== */
+
+        const names =
+          Array.from(
+            new Set(
+              data.lines.flatMap((line) =>
+                line.estaciones
+                  .filter((entry) =>
+                    assignedStationIds.includes(
+                      entry.estacion_id,
+                    ),
+                  )
+                  .map(
+                    (entry) =>
+                      entry.estacion.nombre,
+                  ),
+              ),
+            ),
+          );
+
+
+        /* ====================================
+           RECORRIDOS ACTIVOS
+        ==================================== */
+
+        const openTrips =
+          data.openTrips;
+
+
+        /* ====================================
+           BUSES OCUPADOS
+        ==================================== */
+
+        const busyBusIds =
+          new Set(
+            openTrips.map(
+              (trip) =>
+                trip.bus.id_bus,
+            ),
+          );
+
+
+        /* ====================================
+           BUSES DISPONIBLES
+        ==================================== */
+
+        const availableBusIds =
+          new Set<number>();
+
+
+        data.lines.forEach((line) => {
+          line.asignaciones_bus.forEach(
+            ({ bus }) => {
+              if (
+                !busyBusIds.has(
+                  bus.id_bus,
+                )
+              ) {
+                availableBusIds.add(
+                  bus.id_bus,
+                );
+              }
+            },
+          );
+        });
+
+
+        if (!cancelled) {
+          setStationNames(names);
+
+          setActiveTrips(
+            openTrips.length,
+          );
+
+          setAvailableBuses(
+            availableBusIds.size,
+          );
+        }
+
+      } catch {
+        if (!cancelled) {
+          setStationNames([]);
+          setActiveTrips(0);
+          setAvailableBuses(0);
+        }
+      }
+    }
+
+
+    void loadDashboard();
+
+
+    return () => {
+      cancelled = true;
+    };
+
+  }, [user]);
+
+
+  /* ========================================
+     RENDER
+  ======================================== */
+
   return (
     <section className="dashboard-page operator-dashboard">
 
-      {/* Encabezado */}
+      {/* ENCABEZADO */}
+
       <PageHeader
         eyebrow="OPERACIÓN DE ESTACIÓN"
         title={
           "Hola, " +
           (user?.name.split(" ")[0] ?? "")
         }
-        description="Registra visitas y conteos de acceso en las estaciones que tienes asignadas."
+        description="Inicia recorridos y registra las visitas de las estaciones que tienes asignadas."
       />
 
 
-      {/* Indicadores */}
+      {/* INDICADORES */}
+
       <MetricGrid
         metrics={[
           {
             title:
               "Estaciones asignadas",
+
             value:
-              user?.stationIds.length,
+              stationCount,
+
             note:
-              "Tu ámbito de operación",
+              "Tu área de trabajo",
+
+            emphasis:
+              true,
           },
+
           {
             title:
-              "Demanda alta",
+              "Recorridos activos",
+
             value:
-              "≥ 150 %",
+              activeTrips,
+
             note:
-              "Regla de unidad adicional",
+              activeTrips > 0
+                ? "Recorridos actualmente en seguimiento"
+                : "No hay recorridos en curso",
           },
+
           {
             title:
-              "Ocupación baja",
+              "Buses disponibles",
+
             value:
-              "< 25 %",
+              availableBuses,
+
             note:
-              "Regla de espera adicional",
+              availableBuses > 0
+                ? "Listos para iniciar otro recorrido"
+                : "No hay unidades libres actualmente",
           },
         ]}
       />
 
 
-      {/* Información principal */}
+      {/* INFORMACIÓN PRINCIPAL */}
+
       <div className="operator-dashboard-grid">
 
-        {/* Flujo */}
+        {/* FLUJO DE TRABAJO */}
+
         <article className="panel operator-workflow">
 
           <span className="eyebrow-text">
@@ -78,59 +259,105 @@ export function OperatorDashboardPage() {
             Flujo de trabajo
           </h2>
 
+
           <ol className="operator-workflow-list">
 
+            {/* PASO 1 */}
+
             <li>
+
               <span>
                 01
               </span>
 
               <div>
+
                 <strong>
-                  Inicia el recorrido
+                  Inicia un recorrido
                 </strong>
 
                 <p>
-                  Selecciona la línea y una
-                  unidad disponible.
+                  Selecciona una línea y un bus
+                  disponible para comenzar.
                 </p>
+
               </div>
+
             </li>
 
 
+            {/* PASO 2 */}
+
             <li>
+
               <span>
                 02
               </span>
 
               <div>
+
                 <strong>
-                  Registra la siguiente estación
+                  Selecciona el recorrido activo
                 </strong>
 
                 <p>
-                  Captura ocupación y demanda
-                  de cada visita.
+                  Si hay varios recorridos en curso,
+                  elige el bus que llegó a la
+                  estación.
                 </p>
+
               </div>
+
             </li>
 
 
+            {/* PASO 3 */}
+
             <li>
+
               <span>
                 03
               </span>
 
               <div>
+
                 <strong>
-                  Actualiza los conteos del día
+                  Registra la visita
                 </strong>
 
                 <p>
-                  Registra los accesos por medio
-                  en tus estaciones.
+                  Indica cuántas personas viajan
+                  en el bus y cuántas esperan
+                  para abordar.
                 </p>
+
               </div>
+
+            </li>
+
+
+            {/* PASO 4 */}
+
+            <li>
+
+              <span>
+                04
+              </span>
+
+              <div>
+
+                <strong>
+                  Revisa el resultado
+                </strong>
+
+                <p>
+                  El sistema indicará si se
+                  necesita apoyo de otra unidad
+                  o tiempo adicional.
+                </p>
+
+              </div>
+
             </li>
 
           </ol>
@@ -138,24 +365,75 @@ export function OperatorDashboardPage() {
         </article>
 
 
-        {/* Estaciones asignadas */}
+        {/* ÁREA DE TRABAJO */}
+
         <aside className="operator-dashboard-side">
 
           <article className="assigned-stations-card">
 
             <span className="eyebrow-text">
-              ESTACIONES ASIGNADAS
+              TU ÁREA DE TRABAJO
             </span>
 
             <h3>
-              Tu área de trabajo
+              Estaciones asignadas
             </h3>
 
-            <p>
-              {user?.stationIds.length
-                ? `Identificadores: ${user.stationIds.join(", ")}`
-                : "No tienes estaciones asignadas. Solicita la asignación al administrador."}
-            </p>
+
+            {stationNames.length > 0 ? (
+
+              <ul className="operator-station-list">
+
+                {stationNames.map(
+                  (station) => (
+                    <li key={station}>
+
+                      <span
+                        className="operator-station-dot"
+                        aria-hidden="true"
+                      />
+
+                      {station}
+
+                    </li>
+                  ),
+                )}
+
+              </ul>
+
+            ) : stationCount > 0 ? (
+
+              <p className="operator-stations-fallback">
+                Tienes {stationCount} estaciones
+                asignadas para tu jornada.
+              </p>
+
+            ) : (
+
+              <p className="operator-stations-fallback">
+                No tienes estaciones asignadas.
+                Solicita la asignación al
+                administrador.
+              </p>
+
+            )}
+
+
+            <div className="operator-assistance-note">
+
+              <strong>
+                Durante el recorrido
+              </strong>
+
+              <p>
+                Puedes tener varios recorridos
+                abiertos con buses distintos.
+                Selecciona el recorrido que
+                corresponda antes de registrar
+                cada visita.
+              </p>
+
+            </div>
 
           </article>
 

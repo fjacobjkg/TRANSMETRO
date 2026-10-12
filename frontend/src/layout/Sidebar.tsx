@@ -49,11 +49,7 @@ export function Sidebar({
 
         {/* Área de navegación */}
         <div className="sidebar-navigation-area">
-          <p className="workspace-caption">
-            Centro de operaciones
-          </p>
-
-          <SidebarNavigation
+<SidebarNavigation
             panels={panels}
             onNavigate={onNavigate}
           />

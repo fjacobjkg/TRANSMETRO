@@ -7,17 +7,24 @@ const prefixes: Record<UserRole, string> = {
 const items: Record<string, string> = {
   home: "Inicio", users: "Cuentas y roles", transport: "Red de transporte",
   personnel: "Personal y seguridad", fleet: "Flota y parqueos",
-  operations: "Operación", reports: "Consultas y reportes", audit: "Bitácora",
+  operations: "Operación", reports: "Consultas y reportes", audit: "Bitácora", "access-counts": "Conteo de accesos",
 };
 const modules: Record<UserRole, string[]> = {
   ADMIN: ["home", "users", "transport", "personnel", "fleet", "operations", "reports", "audit"],
   ADMINISTRATIVO: ["home", "transport", "personnel", "fleet", "reports"],
-  OPERADOR_ESTACION: ["home", "operations"],
+  OPERADOR_ESTACION: ["home", "operations", "access-counts"],
 };
 export function getHomeRouteByRole(role: UserRole) { return prefixes[role] + "/dashboard"; }
 export function getPanelsByRole(role: UserRole): Panel[] {
   return modules[role].map((id) => ({
-    id, icon: id, title: items[id],
+    id, icon: id === "access-counts" ? "reports" : id,
+    title: role === "OPERADOR_ESTACION" && id === "operations" ? "Recorridos"
+      : role === "ADMINISTRATIVO" && id === "personnel" ? "Personal y accesos" : items[id],
+    group: id === "home" ? "Centro de operaciones"
+      : role === "OPERADOR_ESTACION" ? (id === "operations" ? "Operación" : "Control de accesos")
+      : role === "ADMINISTRATIVO" ? (id === "reports" ? "Información" : "Consulta operativa")
+      : ["users", "transport", "personnel"].includes(id) ? "Administración"
+      : ["fleet", "operations"].includes(id) ? "Recursos operativos" : "Información y control",
     path: prefixes[role] + "/" + (id === "home" ? "dashboard" : id),
   }));
 }

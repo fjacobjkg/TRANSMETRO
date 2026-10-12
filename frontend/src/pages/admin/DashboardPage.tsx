@@ -34,63 +34,178 @@ export function AdminDashboardPage() {
   } = useDashboardData();
 
 
+  const metrics = [
+    {
+      title: "Líneas operativas",
+      value: overview?.lines,
+      note: "Rutas configuradas para trabajar",
+    },
+    {
+      title: "Estaciones",
+      value: overview?.stations,
+      note: "Puntos incluidos en la operación",
+    },
+    {
+      title: "Buses registrados",
+      value: overview?.buses,
+      note: "Unidades disponibles en la flota",
+    },
+    {
+      title: "Recorridos en curso",
+      value: overview?.openTrips,
+      note:
+        overview?.openTrips
+          ? "Operaciones activas en este momento"
+          : "No hay recorridos activos",
+    },
+  ];
+
+
   return (
     <section className="dashboard-page admin-dashboard">
 
-      {/* Encabezado */}
+      {/* =====================================
+          ENCABEZADO
+      ====================================== */}
+
       <PageHeader
         eyebrow="ADMINISTRACIÓN DEL SISTEMA"
         title={
           "Hola, " +
           (user?.name.split(" ")[0] ?? "")
         }
-        description="Gestiona la red, las cuentas y la operación desde tu centro de control."
+        description="Administra las cuentas, prepara la flota y supervisa la operación desde un solo lugar."
       />
 
 
-      {/* Estado */}
+      {/* =====================================
+          ESTADO
+      ====================================== */}
+
       <Notice
         error={error}
       />
 
 
-      {/* Indicadores */}
+      {/* =====================================
+          RESUMEN
+      ====================================== */}
+
       <MetricGrid
         loading={loading}
-        metrics={[
-          {
-            title: "Líneas",
-            value: overview?.lines,
-            note: "Red de transporte",
-            emphasis: true,
-          },
-          {
-            title: "Estaciones",
-            value: overview?.stations,
-            note: "Puntos de la red",
-          },
-          {
-            title: "Unidades",
-            value: overview?.buses,
-            note: "Flota registrada",
-          },
-          {
-            title: "Recorridos abiertos",
-            value: overview?.openTrips,
-            note: "Seguimiento en curso",
-          },
-        ]}
+        metrics={metrics}
       />
 
 
-      {/* Contenido principal */}
+      {/* =====================================
+          CONTENIDO PRINCIPAL
+      ====================================== */}
+
       <div className="admin-dashboard-grid">
 
-        {/* Red operativa */}
-        <NetworkPanel />
+        
+
+          {/* GUÍA DE ADMINISTRACIÓN */}
+
+          <article className="panel admin-workflow">
+
+            <span className="eyebrow-text">
+              GESTIÓN PRINCIPAL
+            </span>
+
+            <h2>
+              Prepara la operación
+            </h2>
+
+            <p className="admin-workflow-description">
+              Configura los elementos necesarios
+              para que el personal operativo pueda
+              iniciar y registrar recorridos.
+            </p>
 
 
-        {/* Control y trazabilidad */}
+            <ol className="admin-workflow-list">
+
+              <li>
+                <span>
+                  01
+                </span>
+
+                <div>
+                  <strong>
+                    Administra las cuentas
+                  </strong>
+
+                  <p>
+                    Crea usuarios y asigna el rol
+                    correspondiente a cada persona.
+                  </p>
+
+                  <Link
+                    to="/admin/users"
+                    className="admin-workflow-link"
+                  >
+                    Ir a cuentas y permisos
+                  </Link>
+                </div>
+              </li>
+
+
+              <li>
+                <span>
+                  02
+                </span>
+
+                <div>
+                  <strong>
+                    Prepara la flota
+                  </strong>
+
+                  <p>
+                    Registra parqueos y buses,
+                    y asigna las unidades a una
+                    línea operativa.
+                  </p>
+
+                  <Link
+                    to="/admin/fleet"
+                    className="admin-workflow-link"
+                  >
+                    Ir a flota y parqueos
+                  </Link>
+                </div>
+              </li>
+
+
+              <li>
+                <span>
+                  03
+                </span>
+
+                <div>
+                  <strong>
+                    Supervisa la operación
+                  </strong>
+
+                  <p>
+                    Consulta los recorridos activos
+                    y revisa los cambios realizados
+                    en el sistema.
+                  </p>
+                </div>
+              </li>
+
+            </ol>
+
+          </article>
+
+        
+
+
+        {/* ===================================
+            TRAZABILIDAD
+        ==================================== */}
+
         <aside className="admin-dashboard-side">
 
           <article className="help-card admin-control-card">
@@ -100,12 +215,13 @@ export function AdminDashboardPage() {
             </span>
 
             <h3>
-              Revisa los cambios del sistema
+              Revisa la actividad del sistema
             </h3>
 
             <p>
-              Consulta responsables y fechas de
-              los registros administrativos.
+              Consulta quién realizó cada cambio,
+              qué elemento fue afectado y cuándo
+              ocurrió.
             </p>
 
             <Link
@@ -121,6 +237,7 @@ export function AdminDashboardPage() {
 
       </div>
 
+      <NetworkPanel />
     </section>
   );
 }

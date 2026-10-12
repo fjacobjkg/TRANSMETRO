@@ -304,6 +304,161 @@
   font-weight: 700;
 }
 
+/* ========================================
+   ADMIN WORKFLOW
+======================================== */
+
+.admin-dashboard .admin-workflow {
+  min-width: 0;
+
+  padding: 1.8rem 2rem;
+
+  border-top:
+    3px solid
+    var(--color-accent);
+}
+
+
+.admin-dashboard
+.admin-workflow h2 {
+  margin:
+    0.55rem 0
+    0;
+
+  color:
+    var(--color-ink);
+
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+
+.admin-dashboard
+.admin-workflow-description {
+  max-width: 46rem;
+
+  margin:
+    0.55rem 0
+    1.5rem;
+
+  color:
+    var(--color-muted);
+
+  font-size: 0.8rem;
+
+  line-height: 1.55;
+}
+
+
+/* ========================================
+   STEPS
+======================================== */
+
+.admin-dashboard
+.admin-workflow-list {
+  display: grid;
+
+  gap: 1.15rem;
+
+  margin: 0;
+
+  padding: 0;
+
+  list-style: none;
+}
+
+
+.admin-dashboard
+.admin-workflow-list li {
+  display: grid;
+
+  grid-template-columns:
+    2.5rem minmax(0, 1fr);
+
+  gap: 0.85rem;
+
+  align-items: start;
+}
+
+
+.admin-dashboard
+.admin-workflow-list > li > span {
+  display: grid;
+
+  width: 2.35rem;
+  height: 2.35rem;
+
+  place-items: center;
+
+  border:
+    1px solid
+    #cbdde1;
+
+  border-radius: 50%;
+
+  background:
+    var(--color-brand-soft);
+
+  color:
+    var(--color-brand);
+
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+
+.admin-dashboard
+.admin-workflow-list strong {
+  display: block;
+
+  color:
+    var(--color-ink);
+
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+
+.admin-dashboard
+.admin-workflow-list p {
+  margin:
+    0.3rem 0
+    0;
+
+  color:
+    var(--color-muted);
+
+  font-size: 0.73rem;
+
+  line-height: 1.5;
+}
+
+
+/* ========================================
+   WORKFLOW LINKS
+======================================== */
+
+.admin-dashboard
+.admin-workflow-link {
+  display: inline-block;
+
+  margin-top: 0.45rem;
+
+  color:
+    var(--color-brand);
+
+  font-size: 0.72rem;
+  font-weight: 800;
+
+  text-decoration: none;
+}
+
+
+.admin-dashboard
+.admin-workflow-link:hover {
+  text-decoration: underline;
+}
+
 
 /* ========================================
    TABLET / SMALL DESKTOP

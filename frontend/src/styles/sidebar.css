@@ -822,3 +822,6 @@
       translateX(0);
   }
 }
+.sidebar-nav-group { display: flex; flex-direction: column; gap: 5px; }
+.sidebar-nav-group .workspace-caption { margin: 16px 10px 5px; }
+.sidebar-nav-group:first-child .workspace-caption { margin-top: 24px; }

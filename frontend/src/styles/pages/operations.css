@@ -991,6 +991,8 @@ li > span:not(.badge) {
   background: var(--color-brand-soft);
 }
 
+.operator-access-counts-page .trip-access-summary-card { margin-top: 1.5rem; }
+
 
 .operations-page .next-station-box .section-kicker {
   display: block;

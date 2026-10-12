@@ -11,7 +11,8 @@ export function useOperationsWorkspace() {
   const [selectedLine, setSelectedLine] = useState("");
   const [selectedBus, setSelectedBus] = useState("");
   const [selectedTrip, setSelectedTrip] = useState("");
-  const [occupancy, setOccupancy] = useState("");
+  const [peopleOff, setPeopleOff] = useState("");
+  const [peopleBoarding, setPeopleBoarding] = useState("");
   const [demand, setDemand] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -38,6 +39,8 @@ export function useOperationsWorkspace() {
   const tripLine = lines.find((item) => item.codigo === activeTrip?.linea.codigo);
   const nextStation = tripLine?.estaciones.slice().sort((a, b) => a.orden - b.orden)[activeTrip?.visitas.length ?? 0];
 
+  useEffect(() => { setPeopleOff(""); setPeopleBoarding(""); setDemand(""); }, [selectedTrip, nextStation?.estacion_id]);
+
   const perform = useCallback(async (action: () => Promise<unknown>, success: string) => {
     setBusy(true); setError(""); setMessage("");
     try { await action(); await load(); setMessage(success); return true; }
@@ -52,10 +55,10 @@ export function useOperationsWorkspace() {
   }
   function recordVisit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!activeTrip || !nextStation) return;
-    void perform(() => createVisit(activeTrip.id_recorrido, nextStation.estacion_id, Number(occupancy), Number(demand)),
+    if (busy || !activeTrip || !nextStation || !canRecordNext || !peopleOff.trim() || !peopleBoarding.trim() || !demand.trim()) return;
+    void perform(() => createVisit(activeTrip.id_recorrido, nextStation.estacion_id, Number(demand), Number(peopleOff), Number(peopleBoarding)),
       "Visita registrada y evaluada.").then((saved) => {
-        if (saved) { setOccupancy(""); setDemand(""); }
+        if (saved) { setPeopleOff(""); setPeopleBoarding(""); setDemand(""); }
       });
   }
   function cancelSelectedTrip() {
@@ -70,7 +73,7 @@ export function useOperationsWorkspace() {
   return {
     user, lines, trips, line, activeTrip, nextStation,
     selectedLine, setSelectedLine, selectedBus, setSelectedBus, selectedTrip, setSelectedTrip,
-    occupancy, setOccupancy, demand, setDemand,
+    peopleOff, setPeopleOff, peopleBoarding, setPeopleBoarding, demand, setDemand,
     message, error, busy, cancelTrip, setCancelTrip, canRecordNext,
     startTrip, recordVisit, cancelSelectedTrip,
     refresh: () => void load().catch((cause) => setError(getError(cause, "No se pudo actualizar la operación."))),

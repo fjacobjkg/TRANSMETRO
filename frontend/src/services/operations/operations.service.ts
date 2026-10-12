@@ -27,8 +27,8 @@ export async function getTodayAccessCounts(stationId: string) {
 }
 export const createTrip = (lineId: number, busId: number) =>
   apiRequest("/api/operations/trips", { method: "POST", body: { lineId, busId } });
-export const createVisit = (tripId: string | number, stationId: number, occupancy: number, demand: number) =>
-  apiRequest(`/api/operations/trips/${tripId}/visits`, { method: "POST", body: { stationId, occupancy, demand } });
+export const createVisit = (tripId: string | number, stationId: number, demand: number, peopleOff: number, peopleBoarding: number) =>
+  apiRequest(`/api/operations/trips/${tripId}/visits`, { method: "POST", body: { stationId, demand, peopleOff, peopleBoarding } });
 export async function saveAccessCount({ selectedMedia, quantity, stationId, existing }: {
   selectedMedia: number; quantity: number; stationId: string; existing?: AccessCount;
 }) {
@@ -43,3 +43,14 @@ export async function saveAccessCount({ selectedMedia, quantity, stationId, exis
 }
 export const closeTrip = (tripId: string | number) =>
   apiRequest(`/api/operations/trips/${tripId}/close`, { method: "POST", body: { state: "CANCELADO" } });
+
+export async function getFinalizedTrips() {
+  const items: Trip[] = [];
+  let page = 1;
+  while (true) {
+    const response = await apiRequest<{ items: Trip[]; total: number }>(`/api/operations/trips?state=FINALIZADO&page=${page}&pageSize=100`);
+    items.push(...response.items);
+    if (items.length >= response.total || response.items.length === 0) return items;
+    page += 1;
+  }
+}

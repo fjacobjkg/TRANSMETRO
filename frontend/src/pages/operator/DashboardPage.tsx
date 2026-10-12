@@ -326,9 +326,8 @@ export function OperatorDashboardPage() {
                 </strong>
 
                 <p>
-                  Indica cuántas personas viajan
-                  en el bus y cuántas esperan
-                  para abordar.
+                  Indica cuántas personas bajan,
+                  esperan y abordan.
                 </p>
 
               </div>
@@ -351,8 +350,8 @@ export function OperatorDashboardPage() {
                 </strong>
 
                 <p>
-                  El sistema indicará si se
-                  necesita apoyo de otra unidad
+                  El sistema calcula la ocupación
+                  y evalúa si se necesita apoyo
                   o tiempo adicional.
                 </p>
 

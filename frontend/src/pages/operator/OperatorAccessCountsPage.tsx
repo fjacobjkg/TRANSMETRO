@@ -1,4 +1,5 @@
 import { AccessCountForm } from "../../components/operations/AccessCountForm";
+import { TripAccessSummary } from "../../components/operations/TripAccessSummary";
 import { Notice, PageHeader } from "../../components/ui/PageHeader";
 import { useAccessCountsWorkspace } from "../../hooks/operations/useAccessCountsWorkspace";
 import "../../styles/pages/operations.css";
@@ -18,6 +19,7 @@ export function OperatorAccessCountsPage() {
         onMediaChange={workspace.setSelectedMedia} onQuantityChange={workspace.setQuantity}
         onSubmit={workspace.recordCount}
       />
+      <TripAccessSummary />
     </section>
   );
 }

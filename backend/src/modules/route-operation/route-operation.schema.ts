@@ -3,7 +3,8 @@ export const idParamSchema = z.coerce.bigint().positive().max(18_446_744_073_709
 export const tripSchema = z.object({ busId: z.number().int().positive(), lineId: z.number().int().positive() });
 export const visitSchema = z.object({
   stationId: z.number().int().positive(),
-  occupancy: z.number().int().nonnegative().max(65_535),
+  peopleOff: z.number().int().nonnegative().max(4_294_967_295),
+  peopleBoarding: z.number().int().nonnegative().max(4_294_967_295),
   demand: z.number().int().nonnegative().max(4_294_967_295),
   occurredAt: z.iso.datetime({ offset: true }).optional(),
 });

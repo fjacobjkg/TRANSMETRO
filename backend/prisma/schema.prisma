@@ -278,6 +278,8 @@ model visita {
   orden Int @db.UnsignedSmallInt
   fecha_hora DateTime @db.DateTime(0)
   ocupacion Int @db.UnsignedSmallInt
+  personas_bajan Int? @db.UnsignedInt
+  personas_abordan Int? @db.UnsignedInt
   demanda Int @db.UnsignedInt
   creado_en DateTime @default(now()) @db.Timestamp(0)
   recorrido       recorrido @relation(fields: [recorrido_id], references: [id_recorrido], onDelete: Restrict, onUpdate: Cascade, map: "fk_visitas_recorrido")

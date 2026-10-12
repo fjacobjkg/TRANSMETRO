@@ -63,12 +63,14 @@ export function OperationsWorkspace() {
           selectedTrip={workspace.selectedTrip}
           activeTrip={workspace.activeTrip}
           nextStation={workspace.nextStation}
-          occupancy={workspace.occupancy}
+          peopleOff={workspace.peopleOff}
+          peopleBoarding={workspace.peopleBoarding}
           demand={workspace.demand}
           busy={workspace.busy}
           canRecordNext={workspace.canRecordNext}
           onTripChange={workspace.setSelectedTrip}
-          onOccupancyChange={workspace.setOccupancy}
+          onPeopleOffChange={workspace.setPeopleOff}
+          onPeopleBoardingChange={workspace.setPeopleBoarding}
           onDemandChange={workspace.setDemand}
           onSubmit={workspace.recordVisit}
         />

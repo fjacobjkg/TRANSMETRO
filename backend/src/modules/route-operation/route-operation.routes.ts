@@ -20,7 +20,7 @@ routeOperationRouter.post("/trips", requireRole("ADMIN", "OPERADOR_ESTACION"), a
 });
 routeOperationRouter.post("/trips/:id/visits", requireRole("ADMIN", "OPERADOR_ESTACION"), async (request, response, next) => {
   const id = idParamSchema.safeParse(request.params.id); const body = visitSchema.safeParse(request.body);
-  if (!id.success || !body.success) { response.status(400).json({ message: "Datos de visita inválidos.", ...(body.success ? {} : { issues: body.error.issues }) }); return; }
+  if (!id.success || !body.success) { response.status(400).json({ message: "Indica la estación y cantidades enteras no negativas de personas que bajan, esperan y abordan.", ...(body.success ? {} : { issues: body.error.issues }) }); return; }
   try { response.status(201).json(await recordVisit(getAuthenticatedUser(response), id.data, body.data)); } catch (error) { next(error); }
 });
 routeOperationRouter.post("/trips/:id/close", requireRole("ADMIN", "OPERADOR_ESTACION"), async (request, response, next) => {

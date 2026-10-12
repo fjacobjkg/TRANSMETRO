@@ -1,9 +1,9 @@
 import { prisma } from "../../lib/prisma.js";
-import { ensure } from "../../lib/domain-error.js";
+import { DomainError, ensure } from "../../lib/domain-error.js";
 import type { AuthenticatedUser } from "../../middleware/auth.js";
 import { attachVisitEvaluations, evaluationDescription } from "../../lib/visit-evaluation.js";
 import { auditEntityId, writeAudit } from "../audit/audit.service.js";
-import { evaluateVisit } from "./route-operation.rules.js";
+import { calculateDepartureOccupancy, evaluateVisit } from "./route-operation.rules.js";
 const current = () => ({ fecha_fin: null, fecha_inicio: { lte: new Date() } });
 
 export async function listOperationalLines(user: AuthenticatedUser) {
@@ -53,11 +53,11 @@ export async function listTrips(user: AuthenticatedUser, filters: { lineId?: num
   return { items: items.map(trip=>({...trip,visitas:trip.visitas.map(visit=>enriched.get(String(visit.id_visita))!)})), total, page: filters.page, pageSize: filters.pageSize };
 }
 
-export async function recordVisit(user: AuthenticatedUser, tripId: number | bigint, input: { stationId: number; occupancy: number; demand: number; occurredAt?: string | undefined }) {
+export async function recordVisit(user: AuthenticatedUser, tripId: number | bigint, input: { stationId: number; peopleOff: number; peopleBoarding: number; demand: number; occurredAt?: string | undefined }) {
   return prisma.$transaction(async (tx) => {
     const trip = await tx.recorrido.findUnique({
       where: { id_recorrido: BigInt(tripId) },
-      include: { bus: true, linea: { include: { estaciones: { where: { activo: true }, orderBy: { orden: "asc" } } } }, visitas: { orderBy: { orden: "asc" }, select: { estacion_id: true, orden: true, fecha_hora: true } } },
+      include: { bus: true, linea: { include: { estaciones: { where: { activo: true }, orderBy: { orden: "asc" } } } }, visitas: { orderBy: { orden: "asc" }, select: { estacion_id: true, orden: true, fecha_hora: true, ocupacion: true } } },
     });
     ensure(trip && trip.estado === "EN_CURSO", 404, "No se encontró un recorrido abierto.");
     const sequence = trip.visitas.length + 1;
@@ -68,7 +68,15 @@ export async function recordVisit(user: AuthenticatedUser, tripId: number | bigi
     const assignment = await tx.asignacion_bus_linea.findFirst({ where: { bus_id: trip.bus_id, linea_id: trip.linea_id, ...current() } });
     ensure(assignment, 409, "El bus ya no está asignado a la línea de este recorrido.");
     const capacity = trip.bus.capacidad_maxima;
-    const { extraUnit, extraWaitMinutes: extraWait } = evaluateVisit(capacity, input.occupancy, input.demand);
+    const arriving = trip.visitas.at(-1)?.ocupacion ?? 0;
+    let occupancy: number;
+    try {
+      occupancy = calculateDepartureOccupancy(capacity, arriving, input.peopleOff, input.peopleBoarding, input.demand);
+    } catch (error) {
+      if (error instanceof RangeError) throw new DomainError(400, error.message);
+      throw error;
+    }
+    const { extraUnit, extraWaitMinutes: extraWait } = evaluateVisit(capacity, occupancy, input.demand);
     const occurredAt = input.occurredAt ? new Date(input.occurredAt) : new Date();
     ensure(occurredAt.getTime() <= Date.now() + 60_000, 400, "La fecha de la visita no puede estar en el futuro.");
     ensure(occurredAt >= trip.fecha_inicio && occurredAt >= (trip.visitas.at(-1)?.fecha_hora ?? trip.fecha_inicio), 400, "La visita debe ser posterior al inicio y a la visita anterior.");
@@ -78,7 +86,9 @@ export async function recordVisit(user: AuthenticatedUser, tripId: number | bigi
       usuario_id: user.id,
       orden: expected.orden,
       fecha_hora: occurredAt,
-      ocupacion: input.occupancy,
+      ocupacion: occupancy,
+      personas_bajan: input.peopleOff,
+      personas_abordan: input.peopleBoarding,
       demanda: input.demand,
     } });
     await tx.bitacora.create({ data: { usuario_id: user.id, accion: "REGISTRAR_VISITA", entidad: "visita", entidad_id: auditEntityId(visit.id_visita), descripcion: evaluationDescription(visit.id_visita,capacity) } });

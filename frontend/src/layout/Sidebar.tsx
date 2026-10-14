@@ -1,4 +1,5 @@
 import { BrandLogo } from "../components/BrandLogo";
+import { X } from "lucide-react";
 
 import type { AuthUser } from "../types/auth";
 import type { Panel } from "../types/navigation.types";
@@ -43,7 +44,7 @@ export function Sidebar({
             aria-label="Cerrar menú"
             onClick={onNavigate}
           >
-            ×
+            <X size={18} strokeWidth={1.8} aria-hidden="true" />
           </button>
         </div>
 
@@ -51,6 +52,7 @@ export function Sidebar({
         <div className="sidebar-navigation-area">
 <SidebarNavigation
             panels={panels}
+            role={user.role}
             onNavigate={onNavigate}
           />
         </div>

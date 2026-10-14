@@ -9,6 +9,7 @@ import { FieldLabel } from "../ui/FieldLabel";
 import { Input } from "../ui/Input";
 import { Select } from "../ui/Select";
 import { Notice } from "../ui/PageHeader";
+import { enabledRoleOptions, enabledCatalogRows } from "../../config/features";
 
 import {
   optionLabel,
@@ -104,7 +105,8 @@ export function CatalogResourceForm({
             )}
 
 
-          {(lookups[field.name] ?? []).filter(row => catalogRelationAvailable(resource.key, field.name, row, values)).map(
+          {enabledCatalogRows(field.name === "userId" ? "users" : field.name, lookups[field.name] ?? [])
+            .filter(row => catalogRelationAvailable(resource.key, field.name, row, values)).map(
             (row) => (
               <option
                 key={String(
@@ -144,7 +146,7 @@ export function CatalogResourceForm({
           }
           placeholder="Selecciona una opción"
         >
-          {field.options
+          {(field.name === "role" ? enabledRoleOptions(field.options ?? []) : field.options)
             ?.filter(
               (item) =>
                 item.value !== "",

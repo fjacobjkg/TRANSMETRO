@@ -78,6 +78,8 @@ export function SidebarAccount({
 
         <ChevronDown
           className="sidebar-user-chevron"
+          size={16}
+          strokeWidth={1.8}
           aria-hidden="true"
         />
       </button>
@@ -93,6 +95,8 @@ export function SidebarAccount({
           >
             <LogOut
               className="sidebar-user-logout-icon"
+              size={16}
+              strokeWidth={1.8}
               aria-hidden="true"
             />
 

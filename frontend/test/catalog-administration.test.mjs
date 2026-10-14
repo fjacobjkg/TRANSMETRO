@@ -2,7 +2,7 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { personnelView, securityAccessView, contextFormResource } from "../src/config/catalog/administration.ts";
 import { resourcesBySection } from "../src/config/catalog/resources.ts";
-import { getPanelsByRole } from "../src/utils/role-routing.ts";
+import { getPanelsByRole } from "./support/role-routing.mjs";
 
 const resources = Object.values(resourcesBySection).flat();
 const actions = view => Object.values(view.rowActions).flat();
@@ -75,7 +75,7 @@ describe("Reorganización de Personal y Seguridad y accesos", () => {
     assert.equal(admin.find(p => p.id === "personnel").path, "/admin/personnel");
     assert.equal(admin.find(p => p.id === "security-access").path, "/admin/security-access");
     assert.equal(admin.find(p => p.id === "security-access").group, "Administración");
-    assert.deepEqual(getPanelsByRole("ADMINISTRATIVO").map(p => p.id), ["home", "transport", "personnel", "fleet", "reports"]);
+    assert.deepEqual(getPanelsByRole("ADMINISTRATIVO", { administrativeRole: true }).map(p => p.id), ["home", "transport", "personnel", "fleet", "reports"]);
     assert.deepEqual(getPanelsByRole("OPERADOR_ESTACION").map(p => p.id), ["home", "operations", "access-counts"]);
   });
 });

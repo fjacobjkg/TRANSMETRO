@@ -27,7 +27,7 @@ describe("Recaudación por recorrido administrativa", () => {
   it("sustituye los conteos y mantiene los reportes de visitas y flota, sin mapa", () => {
     const tabs = getReportTabs({ showNetwork: false, paymentSimulation: true });
     assert.deepEqual(tabs.map(tab => tab.id), ["operations", "payment-simulation", "fleet"]);
-    assert.deepEqual(tabs.map(tab => tab.title), ["Visitas y demanda", "Recaudación por recorrido", "Historial de flota"]);
+    assert.deepEqual(tabs.map(tab => tab.title), ["Operación registrada", "Recaudación estimada", "Asignaciones de flota"]);
     assert.deepEqual(getReportTabs(), reportKinds);
   });
   it("usa el mismo resumen que el Operador y excluye activos y cancelados", () => {

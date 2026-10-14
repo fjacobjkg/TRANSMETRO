@@ -8,7 +8,6 @@
   margin-bottom: 1.25rem;
 }
 .admin-operations-page .trip-visit-badges { margin-top: 0; }
-.admin-operations-page .trip-visit-card .trip-visit-badges { margin-top: 0.85rem; }
 @media (max-width: 1000px) {
   .admin-operations-page .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }

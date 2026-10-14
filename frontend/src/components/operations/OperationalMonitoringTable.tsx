@@ -2,9 +2,8 @@ import { useMemo, useState } from "react";
 import type { Line, Trip, Visit } from "../../types/operations.types";
 import { monitoringSnapshot } from "../../utils/operational-monitoring";
 import { DataTable, type Column, type Row } from "../ui/DataTable";
-import { Button } from "../ui/Button";
 import { OperationCard } from "./OperationCard";
-import { TripVisitAlerts, TripVisitDetail } from "./TripVisitDetail";
+import { TripVisitAlerts, TripVisitDetail, TripVisitToggle } from "./TripVisitDetail";
 
 export function OperationalMonitoringTable({ trips, lines, loading, active }: {
   trips: Trip[]; lines: Line[]; loading: boolean; active: boolean;
@@ -32,11 +31,8 @@ export function OperationalMonitoringTable({ trips, lines, loading, active }: {
     icon="▤" className="trip-list-card">
     <DataTable rows={rows} columns={columns} loading={loading} actions={row => {
       const id = String(row.id);
-      return <Button variant="quiet" aria-expanded={expandedTrip === id} aria-controls={`trip-detail-${id}`}
-        aria-label={`${expandedTrip === id ? "Ocultar" : "Ver"} detalle del recorrido ${id}`}
-        onClick={() => setExpandedTrip(current => current === id ? null : id)}>
-        {expandedTrip === id ? "Ocultar detalle" : "Ver detalle"}
-      </Button>;
+      return <TripVisitToggle trip={row.trip as Trip} expanded={expandedTrip === id}
+        onToggle={() => setExpandedTrip(current => current === id ? null : id)} />;
     }} renderExpandedRow={row => expandedTrip === String(row.id) ? <TripVisitDetail trip={row.trip as Trip} /> : null} />
   </OperationCard>;
 }

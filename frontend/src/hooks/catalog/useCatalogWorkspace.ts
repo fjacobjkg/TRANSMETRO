@@ -5,6 +5,7 @@ import { resourcesBySection } from "../../config/catalog/resources";
 import type { Field, Resource } from "../../types/catalog.types";
 import { relations } from "../../config/catalog/relations";
 import { getCatalogLookups, getCatalogRows, saveCatalogEntry } from "../../services/catalog/catalog.service";
+import { isFrontendRoleEnabled, enabledCatalogRows, catalogPageMessage, DISABLED_ROLE_MESSAGE } from "../../config/features";
 
 const fieldToColumn: Record<string, string> = {
   name: "nombre", code: "codigo", plate: "placa", capacity: "capacidad_maxima",
@@ -23,6 +24,7 @@ export function useCatalogWorkspace(section: string, resourceKeys?: string[]) {
   const [selected, setSelected] = useState(resources[0]?.key ?? "");
   const resource = resources.find((item) => item.key === selected) ?? resources[0];
   const [rows, setRows] = useState<Row[]>([]);
+  const visibleRows = useMemo(() => enabledCatalogRows(resource?.key ?? "", rows), [resource, rows]);
   const [values, setValues] = useState<Record<string, string>>({});
   const [lookups, setLookups] = useState<Record<string, Row[]>>({});
   const [error, setError] = useState("");
@@ -40,9 +42,7 @@ export function useCatalogWorkspace(section: string, resourceKeys?: string[]) {
     try {
       const result = await getCatalogRows(resource.path, signal);
       setRows(result.items ?? []);
-      if (result.total && result.total > (result.items?.length ?? 0)) {
-        setMessage("Se muestran los primeros " + result.items?.length + " registros de " + result.total + ".");
-      }
+      setMessage(catalogPageMessage(resource.key, result.items ?? [], result.total));
     } catch (cause) {
       if (!signal?.aborted) setError(cause instanceof Error ? cause.message : "No fue posible cargar.");
     } finally {
@@ -89,6 +89,7 @@ export function useCatalogWorkspace(section: string, resourceKeys?: string[]) {
     if (!target?.method || user?.role !== "ADMIN") return;
     setBusy(true); setError(""); setMessage("");
     try {
+      if (values.role && !isFrontendRoleEnabled(values.role)) throw new Error(DISABLED_ROLE_MESSAGE);
       if (target.key === "update-user" && !values.role && !values.active) {
         throw new Error("Selecciona un cambio de rol o estado.");
       }
@@ -112,7 +113,7 @@ export function useCatalogWorkspace(section: string, resourceKeys?: string[]) {
   }
 
   return {
-    user, resources, resource, selected, setSelected, rows, values, setValues, lookups,
+    user, resources, resource, selected, setSelected, rows: visibleRows, values, setValues, lookups,
     error, message, busy, formOpen, setFormOpen, editing, formFields, formResource: target, canWrite, openForm, submit,
     closeForm: () => { if (!busy) { setFormOpen(false); setFormResource(null); } },
     refresh: () => void load(),

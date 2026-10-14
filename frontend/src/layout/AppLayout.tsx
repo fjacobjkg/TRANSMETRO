@@ -94,6 +94,7 @@ export function AppLayout() {
           >
             <Menu
               size={20}
+              strokeWidth={1.8}
               aria-hidden="true"
             />
           </button>

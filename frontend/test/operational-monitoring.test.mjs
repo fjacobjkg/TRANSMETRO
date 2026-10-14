@@ -2,7 +2,7 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { monitoringSnapshot, monitoringTrips, monitoringSummary } from "../src/utils/operational-monitoring.ts";
-import { getPanelsByRole } from "../src/utils/role-routing.ts";
+import { getPanelsByRole } from "./support/role-routing.mjs";
 
 const station = (id, order) => ({ estacion_id:id, orden:order, estacion:{ nombre:`Estación ${id}` } });
 const line = { codigo:"LINE-TEST", estaciones:[station(3,3),station(1,1),station(2,2)] };
@@ -50,7 +50,7 @@ describe("Seguimiento operativo de solo consulta", () => {
   });
   it("mueve únicamente la entrada administrativa y conserva su URL", () => {
     const admin=getPanelsByRole("ADMIN");
-    assert.deepEqual(admin.filter(p=>p.group==="Recursos operativos").map(p=>p.id),["fleet"]);
+    assert.deepEqual(admin.filter(p=>p.group==="Configuración operativa").map(p=>p.id),["transport","fleet"]);
     assert.deepEqual(admin.filter(p=>p.group==="Información y control").map(p=>p.title),["Seguimiento operativo","Consultas y reportes","Bitácora"]);
     assert.equal(admin.find(p=>p.id==="operations").path,"/admin/operations");
     assert.equal(getPanelsByRole("OPERADOR_ESTACION").find(p=>p.id==="operations").title,"Recorridos");

@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { DataTable, type Column, type Row } from "../ui/DataTable";
 import { OperationCard } from "./OperationCard";
 import type { Trip } from "../../types/operations.types";
-import { TripVisitDetail } from "./TripVisitDetail";
+import { TripVisitDetail, TripVisitToggle } from "./TripVisitDetail";
 
 export function TripsTable({ trips, busy, onCancel }: { trips: Trip[]; busy: boolean; onCancel: (trip: Trip) => void }) {
   const [expandedTrip, setExpandedTrip] = useState<string | null>(null);
@@ -13,14 +13,8 @@ export function TripsTable({ trips, busy, onCancel }: { trips: Trip[]; busy: boo
     { key: "visitas", label: "Visitas", render: row => {
       const trip = row.trip as Trip;
       const id = String(trip.id_recorrido);
-      return <div className="trip-detail-toggle">
-        <span>{trip.visitas.length} visitas</span>
-        <button className="button quiet" type="button" aria-expanded={expandedTrip === id}
-          aria-controls={`trip-detail-${id}`} aria-label={`${expandedTrip === id ? "Ocultar" : "Ver"} detalle del recorrido ${id}`}
-          onClick={() => setExpandedTrip(current => current === id ? null : id)}>
-          {expandedTrip === id ? "Ocultar detalle" : "Ver detalle"}
-        </button>
-      </div>;
+      return <TripVisitToggle trip={trip} expanded={expandedTrip === id}
+        onToggle={() => setExpandedTrip(current => current === id ? null : id)} />;
     } },
     { key: "acciones", label: "Acciones", render: row => {
       const trip = row.trip as Trip;

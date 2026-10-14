@@ -3,7 +3,7 @@ import type { Resource } from "../../types/catalog.types";
 const option = (label: string, value = label) => ({ label, value });
 export const resourcesBySection: Record<string, Resource[]> = {
   users: [
-      { key: "users", title: "Cuentas de usuario", description: "Crea cuentas internas y asigna uno de los tres roles del sistema.", path: "/api/users?pageSize=100", method: "POST", fields: [
+      { key: "users", title: "Cuentas de usuario", description: "Crea cuentas internas y asigna uno de los roles habilitados en esta interfaz.", path: "/api/users?pageSize=100", method: "POST", fields: [
       { name: "name", label: "Nombre completo", required: true }, { name: "username", label: "Nombre de usuario", required: true },
       { name: "password", label: "Contraseña inicial", kind: "password", required: true, minLength: 12 },
       { name: "role", label: "Rol", kind: "select", required: true, options: [option("Administrador", "ADMIN"), option("Operador de estación", "OPERADOR_ESTACION"), option("Administrativo", "ADMINISTRATIVO")] },

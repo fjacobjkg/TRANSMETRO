@@ -45,7 +45,7 @@ Estas secciones pueden actualizarse reemplazando las imágenes de `docs/capturas
 > Espacio para una captura del flujo del operador.
 
 
-[Registro de recorridos y visitas](docs/capturas/operacion.jpg)
+![Registro de recorridos y visitas](docs/capturas/operacion.jpg)
 
 
 ## Tecnologías

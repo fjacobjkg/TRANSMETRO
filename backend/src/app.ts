@@ -53,22 +53,7 @@ export function createApp(): Express {
   app.use("/api/fleet", fleetRouter);
   app.use("/api/operations", routeOperationRouter);
   app.use("/api/reports", reportRouter);
-   app.use("/api/reports", reportRouter);
- if (env.NODE_ENV === "production") {
-    app.use("/api", notFoundHandler);
-
-    const frontendDirectory = path.resolve(
-      process.cwd(),
-      "../frontend/dist",
-    );
-
-    app.use(express.static(frontendDirectory));
-
-    app.get("/{*route}", (_request, response) => {
-      response.sendFile(path.join(frontendDirectory, "index.html"));
-    });
-  }
-
+  app.use("/api/reports", reportRouter);
   app.use(notFoundHandler);
   app.use(errorHandler);
 

@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "npm run db:generate && tsx watch src/server.ts",
     "start": "node dist/src/server.js",
+    "dev": "npm run db:generate && tsx watch src/server.ts",
     "build": "npm run db:generate && tsc -p tsconfig.build.json",
     "check": "npm run db:generate && tsc --noEmit --pretty false",
     "test": "vitest run",

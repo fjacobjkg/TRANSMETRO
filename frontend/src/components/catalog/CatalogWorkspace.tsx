@@ -40,6 +40,7 @@ import type { Row } from "../../types/table.types";
 import { Badge } from "../ui/DataTable";
 import { Dialog } from "../ui/Dialog";
 import { LineOrderEditor } from "./LineOrderEditor";
+import { AccessGuardAssignments } from "./AccessGuardAssignments";
 
 const allResources = Object.values(resourcesBySection).flat();
 
@@ -210,10 +211,12 @@ export function CatalogWorkspace({
           pageSize={pageSize}
           canCreate={workspace.canWrite || Boolean(adminActions && createAction)}
           createLabel={createAction ? String(createAction.label) : view?.createLabels?.[resource.key]}
-          rowActions={adminActions && contextualActions ? row => contextualActions.map(action => <Button
+          rowActions={adminActions && (contextualActions || resource.key === "accesses") ? row => <>{contextualActions?.map(action => <Button
             key={action.resourceKey} variant="quiet" disabled={workspace.busy} onClick={() => openContextForm(action, row)}>
             {typeof action.label === "function" ? action.label(row) : action.label}
-          </Button>) : undefined}
+          </Button>)}
+            {resource.key === "accesses" && <AccessGuardAssignments access={row} disabled={workspace.busy} onSaved={workspace.refresh} />}
+          </> : undefined}
           onCreate={() =>
             createAction ? openContextForm(createAction) : workspace.openForm()
           }

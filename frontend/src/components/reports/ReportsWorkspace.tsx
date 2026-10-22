@@ -12,6 +12,7 @@ import { ReportTabs } from "./ReportTabs";
 import { useReportsWorkspace } from "../../hooks/reports/useReportsWorkspace";
 import { PaymentSimulationReport } from "./PaymentSimulationReport";
 import { ReportView } from "./ReportView";
+import { operationAlertCounts } from "../../utils/report-alerts";
 
 export function ReportsWorkspace({ showNetwork = true, paymentSimulation = false }: {
   showNetwork?: boolean; paymentSimulation?: boolean;
@@ -20,10 +21,12 @@ export function ReportsWorkspace({ showNetwork = true, paymentSimulation = false
   const [showPayments, setShowPayments] = useState(false);
   const columns = getReportColumns(report.kind, paymentSimulation);
   const exportColumns = getReportColumns(report.kind);
+  const alerts = operationAlertCounts(report.summary);
   const statistics = paymentSimulation && report.kind === "operations" ? [
     { title: "Visitas registradas", value: report.summary.visits },
     { title: "Demanda acumulada", value: report.summary.demandTotal },
-    { title: "Alertas detectadas", value: report.summary.extraUnitAlerts },
+    { title: "Alertas detectadas", value: alerts.total,
+      note: report.busy ? undefined : `${report.formatNumber(alerts.unitAlerts)} por unidad adicional · ${report.formatNumber(alerts.waitAlerts)} por espera adicional` },
   ] : paymentSimulation && report.kind === "fleet" ? [
     { title: "Buses consultados", value: ((report.result.items ?? []) as unknown[]).length },
     { title: "Asignaciones encontradas", value: report.rows.length },
@@ -69,7 +72,7 @@ export function ReportsWorkspace({ showNetwork = true, paymentSimulation = false
           <div className="notice notice-warning">Los totales incluyen todos los registros coincidentes. La tabla y el CSV contienen las primeras {String(report.result.detailLimit)} visitas. Acota las fechas para exportar el detalle completo.</div>}
         <article className="panel report-results">
           {paymentSimulation && <div className="panel-heading"><h3>Resultados de la consulta</h3>{actions}</div>}
-          <DataTable rows={report.rows} columns={columns} loading={report.busy} />
+          <DataTable resetKey={JSON.stringify([report.kind, report.filters])} rows={report.rows} columns={columns} loading={report.busy} />
           {report.kind === "fleet" && <p className="muted report-caption">{paymentSimulation
             ? "Hasta 100 asignaciones de cada tipo por bus."
             : "Últimas 100 asignaciones de cada tipo por bus. Los filtros de línea y bus delimitan las unidades consultadas."}</p>}

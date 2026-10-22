@@ -117,6 +117,7 @@ export function CatalogResourceTable({
         />
       ) : (
         <DataTable
+          resetKey={resource.key}
           rows={rows}
           columns={columns}
           loading={loading}

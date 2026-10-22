@@ -20,6 +20,7 @@ import {
 } from "../../services/operations/operations.service";
 
 import "../../styles/pages/operator/dashboard.css";
+import { availableOperationBuses } from "../../utils/operation-availability";
 
 
 export function OperatorDashboardPage() {
@@ -108,41 +109,10 @@ export function OperatorDashboardPage() {
 
 
         /* ====================================
-           BUSES OCUPADOS
-        ==================================== */
-
-        const busyBusIds =
-          new Set(
-            openTrips.map(
-              (trip) =>
-                trip.bus.id_bus,
-            ),
-          );
-
-
-        /* ====================================
            BUSES DISPONIBLES
         ==================================== */
 
-        const availableBusIds =
-          new Set<number>();
-
-
-        data.lines.forEach((line) => {
-          line.asignaciones_bus.forEach(
-            ({ bus }) => {
-              if (
-                !busyBusIds.has(
-                  bus.id_bus,
-                )
-              ) {
-                availableBusIds.add(
-                  bus.id_bus,
-                );
-              }
-            },
-          );
-        });
+        const availableBuses = availableOperationBuses(data.lines, openTrips);
 
 
         if (!cancelled) {
@@ -153,7 +123,7 @@ export function OperatorDashboardPage() {
           );
 
           setAvailableBuses(
-            availableBusIds.size,
+            availableBuses.length,
           );
         }
 

@@ -8,6 +8,7 @@ import { Dialog } from "../ui/Dialog";
 import { FieldLabel } from "../ui/FieldLabel";
 import { Input } from "../ui/Input";
 import { Select } from "../ui/Select";
+import { SearchableSelect } from "../ui/SearchableSelect";
 import { Notice } from "../ui/PageHeader";
 import { enabledRoleOptions, enabledCatalogRows } from "../../config/features";
 
@@ -82,49 +83,24 @@ export function CatalogResourceForm({
 
     if (relation) {
       return (
-        <Select
+        <SearchableSelect
           required={field.required}
           value={value}
           disabled={(resource.key === "pilot-bus" && field.name === "pilotId") || (resource.key === "bus-pilot" && field.name === "busId")}
-          onChange={(event) =>
-            onChange(
-              field.name,
-              event.target.value,
-            )
-          }
+          onChange={selected => onChange(field.name, selected)}
           placeholder={
             "Selecciona " +
             relation.label.toLowerCase()
           }
-        >
-          {resource.key === "assign-line" &&
-            field.name === "lineId" && (
-              <option value="0">
-                Retirar de la línea
-              </option>
-            )}
-
-
-          {enabledCatalogRows(field.name === "userId" ? "users" : field.name, lookups[field.name] ?? [])
-            .filter(row => catalogRelationAvailable(resource.key, field.name, row, values)).map(
-            (row) => (
-              <option
-                key={String(
-                  row[relation.id],
-                )}
-                value={String(
-                  row[relation.id],
-                )}
-              >
-                {optionLabel(row)}
-
-                {row.activo === false
-                  ? " · En preparación / inactivo"
-                  : ""}
-              </option>
-            ),
-          )}
-        </Select>
+          options={[
+            ...(resource.key === "assign-line" && field.name === "lineId"
+              ? [{ value: "0", label: "Retirar de la línea" }] : []),
+            ...enabledCatalogRows(field.name === "userId" ? "users" : field.name, lookups[field.name] ?? [])
+              .filter(row => catalogRelationAvailable(resource.key, field.name, row, values))
+              .map(row => ({ value: String(row[relation.id]),
+                label: optionLabel(row) + (row.activo === false ? " · En preparación / inactivo" : "") })),
+          ]}
+        />
       );
     }
 

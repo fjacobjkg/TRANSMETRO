@@ -576,6 +576,9 @@
 
 .table-pagination {
   display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  min-width: 0;
 
   align-items: center;
   justify-content: space-between;
@@ -595,6 +598,9 @@
 
   gap: 7px;
 }
+
+.table-pagination > div { flex-wrap: wrap; }
+.table-pagination .button { min-height: 40px; }
 
 
 /* ========================================

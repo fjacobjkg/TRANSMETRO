@@ -2,7 +2,8 @@ import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react
 import { useAuth } from "../AuthContext";
 import type { Row } from "../../types/table.types";
 import { resourcesBySection } from "../../config/catalog/resources";
-import type { Field, Resource } from "../../types/catalog.types";
+import type { Resource } from "../../types/catalog.types";
+import { catalogFormFields } from "../../config/catalog/form-fields";
 import { relations } from "../../config/catalog/relations";
 import { getCatalogLookups, getCatalogRows, saveCatalogEntry } from "../../services/catalog/catalog.service";
 import { isFrontendRoleEnabled, enabledCatalogRows, catalogPageMessage, DISABLED_ROLE_MESSAGE } from "../../config/features";
@@ -78,11 +79,7 @@ export function useCatalogWorkspace(section: string, resourceKeys?: string[]) {
     setError("");
     setFormOpen(true);
   }
-  const formFields: Field[] = [
-    ...(target?.fields ?? []).filter((field) => !editing || !["parkingId", "stationId", "code"].includes(field.name)),
-    ...(editing && !target?.fields?.some(field => field.name === "active") ? [{ name: "active", label: "Estado", kind: "select" as const,
-      options: [{ label: "Activo", value: "true" }, { label: "Inactivo", value: "false" }] }] : []),
-  ];
+  const formFields = catalogFormFields(target, editing);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

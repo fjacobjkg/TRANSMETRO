@@ -3,7 +3,7 @@ import type { Trip, LineStation } from "../../types/operations.types";
 import { arrivingPeople, previewVisit } from "../../utils/visit-passengers";
 import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
-import { Select } from "../ui/Select";
+import { SearchableSelect } from "../ui/SearchableSelect";
 import { OperationCard } from "./OperationCard";
 import { VisitEvaluationPanel } from "./VisitEvaluationPanel";
 
@@ -38,12 +38,10 @@ export function VisitForm({ trips, selectedTrip, activeTrip, nextStation, people
       <form className="work-form" onSubmit={onSubmit}>
         <label>
           Recorrido activo
-          <Select value={selectedTrip} onChange={event => onTripChange(event.target.value)}
-            required disabled={busy} placeholder="Selecciona un recorrido">
-            {trips.filter(trip => trip.estado === "EN_CURSO").map(trip => (
-              <option key={trip.id_recorrido} value={trip.id_recorrido}>{trip.linea.codigo} · bus {trip.bus.codigo}</option>
-            ))}
-          </Select>
+          <SearchableSelect value={selectedTrip} onChange={onTripChange}
+            required disabled={busy} placeholder="Selecciona un recorrido"
+            options={trips.filter(trip => trip.estado === "EN_CURSO").map(trip =>
+              ({ value: String(trip.id_recorrido), label: `${trip.linea.codigo} · bus ${trip.bus.codigo}` }))} />
         </label>
 
         <div className="next-station-box">

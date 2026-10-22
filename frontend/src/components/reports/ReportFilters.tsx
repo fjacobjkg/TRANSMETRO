@@ -1,5 +1,6 @@
 import type { FormEvent } from "react";
 import { Button } from "../ui/Button";
+import { SearchableSelect } from "../ui/SearchableSelect";
 import { relations, optionLabel } from "../../config/catalog/relations";
 import type { Row } from "../ui/DataTable";
 import type { ReportTabKind } from "../../types/reports.types";
@@ -20,10 +21,8 @@ export function ReportFilters({ kind, filters, lookups, busy, onChange, onSubmit
       <label>Hasta<input type="date" min={filters.from} value={filters.to ?? ""} onChange={(event) => onChange("to", event.target.value)} /></label>
     </>}
     {(keysByKind[kind] ?? []).map((key) => <label key={key}>{relations[key].label}
-      <select value={filters[key] ?? ""} onChange={(event) => onChange(key, event.target.value)}>
-        <option value="">Todos</option>
-        {(lookups[key] ?? []).map((row) => <option key={String(row[relations[key].id])} value={String(row[relations[key].id])}>{optionLabel(row)}</option>)}
-      </select>
+      <SearchableSelect value={filters[key] ?? ""} onChange={value => onChange(key, value)} placeholder="Todos"
+        options={(lookups[key] ?? []).map(row => ({ value: String(row[relations[key].id]), label: optionLabel(row) }))} />
     </label>)}
     <Button variant="primary" type="submit" disabled={busy}>{busy ? "Consultando…" : "Aplicar filtros"}</Button>
   </form>;

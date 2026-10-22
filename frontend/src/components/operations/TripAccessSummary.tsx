@@ -3,7 +3,7 @@ import { useTripAccessSummary } from "../../hooks/operations/useTripAccessSummar
 import { tripAccessSummary } from "../../utils/trip-access-summary";
 import { DataTable, type Column } from "../ui/DataTable";
 import { Notice } from "../ui/PageHeader";
-import { Select } from "../ui/Select";
+import { SearchableSelect } from "../ui/SearchableSelect";
 import { OperationCard } from "./OperationCard";
 
 export function TripAccessSummary() {
@@ -24,12 +24,10 @@ export function TripAccessSummary() {
         <div className="access-summary-controls">
         <label>
           Selecciona un recorrido
-          <Select value={workspace.selectedTrip} disabled={workspace.loading}
-            onChange={event => workspace.setSelectedTrip(event.target.value)} placeholder="Selecciona un recorrido">
-            {workspace.trips.map(trip => <option key={trip.id_recorrido} value={trip.id_recorrido}>
-              {trip.linea.nombre} · {trip.bus.codigo} · {new Date(trip.fecha_inicio).toLocaleString("es-GT")} · #{trip.id_recorrido}
-            </option>)}
-          </Select>
+          <SearchableSelect value={workspace.selectedTrip} disabled={workspace.loading}
+            onChange={workspace.setSelectedTrip} placeholder="Selecciona un recorrido"
+            options={workspace.trips.map(trip => ({ value: String(trip.id_recorrido),
+              label: `${trip.linea.nombre} · ${trip.bus.codigo} · ${new Date(trip.fecha_inicio).toLocaleString("es-GT")} · #${trip.id_recorrido}` }))} />
         </label>
         </div>
         {workspace.loading ? <p role="status" className="field-help">Cargando recorridos finalizados...</p>

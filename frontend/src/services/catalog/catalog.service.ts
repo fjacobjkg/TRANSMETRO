@@ -23,6 +23,10 @@ export function saveCatalogEntry(path: string, method: string | undefined, body:
   return apiRequest(path, { method, body });
 }
 
+export function endAccessGuardAssignment(assignmentId: number) {
+  return apiRequest("/api/security/guard-assignments/" + assignmentId, { method: "DELETE" });
+}
+
 export async function getLineEditorData() {
   const [lines, stations] = await Promise.all([
     apiRequest<{ items: Row[] }>("/api/transport/lines"),

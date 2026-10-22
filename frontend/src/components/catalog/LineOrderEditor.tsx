@@ -2,6 +2,7 @@ import { Notice } from "../ui/PageHeader";
 import { useEffect } from "react";
 import { optionLabel } from "../../config/catalog/relations";
 import { useLineOrderEditor } from "../../hooks/catalog/useLineOrderEditor";
+import { SearchableSelect } from "../ui/SearchableSelect";
 
 export function LineOrderEditor({ onSaved, initialLineId, onBusyChange }: {
   onSaved: () => void; initialLineId?: string; onBusyChange?: (busy: boolean) => void;
@@ -10,20 +11,17 @@ export function LineOrderEditor({ onSaved, initialLineId, onBusyChange }: {
   useEffect(() => { onBusyChange?.(busy); }, [busy, onBusyChange]);
   return <form className="line-order-editor" onSubmit={submit}>
     <Notice error={error} message={message} />
-    <label>Línea<select required disabled={Boolean(initialLineId)} value={lineId} onChange={(event) => selectLine(event.target.value)}>
-      <option value="">Selecciona la línea que quieres configurar</option>
-      {lines.map((row) => <option key={String(row.id_linea)} value={String(row.id_linea)}>{optionLabel(row)}</option>)}
-    </select></label>
+    <label>Línea<SearchableSelect required disabled={Boolean(initialLineId)} value={lineId} onChange={selectLine}
+      placeholder="Selecciona la línea que quieres configurar"
+      options={lines.map(row => ({ value: String(row.id_linea), label: optionLabel(row) }))} /></label>
     <div className="editor-intro"><strong>Orden del recorrido</strong>
       <p>Selecciona las estaciones y usa las flechas para ordenarlas. Cada distancia conecta con la siguiente parada.</p>
     </div>
     {stops.map((stop, index) => <div className="stop-editor" key={index}>
       <span className="stop-number">{index + 1}</span>
-      <label>Estación<select required value={stop.stationId} onChange={(event) => update(index, { stationId: event.target.value })}>
-        <option value="">Seleccionar estación</option>
-        {stations.map((row) => <option disabled={stops.some((other, i) => i !== index && other.stationId === String(row.id_estacion))}
-          key={String(row.id_estacion)} value={String(row.id_estacion)}>{optionLabel(row)}</option>)}
-      </select></label>
+      <label>Estación<SearchableSelect required value={stop.stationId} onChange={stationId => update(index, { stationId })}
+        placeholder="Seleccionar estación" options={stations.map(row => ({ value: String(row.id_estacion), label: optionLabel(row),
+          disabled: stops.some((other, i) => i !== index && other.stationId === String(row.id_estacion)) }))} /></label>
       {index < stops.length - 1
         ? <label>Distancia a la siguiente (km)<input type="number" min="0" step="0.001" required value={stop.distance}
             onChange={(event) => update(index, { distance: event.target.value })} /></label>

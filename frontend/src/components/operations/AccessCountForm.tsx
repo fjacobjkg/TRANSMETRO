@@ -11,8 +11,8 @@ import {
 } from "../ui/Input";
 
 import {
-  Select,
-} from "../ui/Select";
+  SearchableSelect,
+} from "../ui/SearchableSelect";
 
 import {
   OperationCard,
@@ -80,62 +80,26 @@ export function AccessCountForm({
         <label>
           Estación
 
-          <Select
+          <SearchableSelect
             value={stationId}
-            onChange={(event) =>
-              onStationChange(
-                event.target.value,
-              )
-            }
+            onChange={onStationChange}
             required
             placeholder="Selecciona una estación"
-          >
-            {stationOptions.map(
-              (id) => (
-                <option
-                  key={id}
-                  value={id}
-                >
-                  {stationNames.get(id) ??
-                    `Estación ${id}`}
-                </option>
-              ),
-            )}
-          </Select>
+            options={stationOptions.map(id => ({ value: String(id), label: stationNames.get(id) ?? `Estación ${id}` }))}
+          />
         </label>
 
 
         <label>
           Medio habilitado
 
-          <Select
+          <SearchableSelect
             value={selectedMedia}
-            onChange={(event) =>
-              onMediaChange(
-                event.target.value,
-              )
-            }
+            onChange={onMediaChange}
             required
             placeholder="Selecciona un medio"
-          >
-            {media.map(
-              (item) => (
-                <option
-                  key={
-                    item.id_estacion_medio_acceso
-                  }
-                  value={
-                    item.id_estacion_medio_acceso
-                  }
-                >
-                  {
-                    item.medio_acceso
-                      .nombre
-                  }
-                </option>
-              ),
-            )}
-          </Select>
+            options={media.map(item => ({ value: String(item.id_estacion_medio_acceso), label: item.medio_acceso.nombre }))}
+          />
         </label>
 
 

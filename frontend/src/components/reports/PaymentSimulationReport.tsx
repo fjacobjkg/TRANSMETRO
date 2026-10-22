@@ -66,7 +66,7 @@ export function PaymentSimulationReport() {
       {!source.loading && !rows.length
         ? <div className="empty-state"><strong>No hay recorridos finalizados para esta consulta.</strong>
           <p>Revisa los filtros o consulta de nuevo cuando se complete un recorrido.</p></div>
-        : <DataTable rows={rows} columns={columns} loading={source.loading}
+        : <DataTable resetKey={JSON.stringify(filters)} rows={rows} columns={columns} loading={source.loading}
           actions={row => <Button variant="quiet" aria-expanded={selectedDetail === row.id}
             aria-controls={`payment-detail-${String(row.id)}`}
             aria-label={`${selectedDetail === row.id ? "Cerrar" : "Ver"} detalle del recorrido ${String(row.reference)}`}

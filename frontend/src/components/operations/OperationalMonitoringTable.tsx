@@ -29,7 +29,7 @@ export function OperationalMonitoringTable({ trips, lines, loading, active }: {
   ];
   return <OperationCard eyebrow={active ? "EN CURSO" : "HISTORIAL"} title={active ? "Recorridos en curso" : "Historial de recorridos"}
     icon="▤" className="trip-list-card">
-    <DataTable rows={rows} columns={columns} loading={loading} actions={row => {
+    <DataTable resetKey={active ? "active" : "history"} rows={rows} columns={columns} loading={loading} actions={row => {
       const id = String(row.id);
       return <TripVisitToggle trip={row.trip as Trip} expanded={expandedTrip === id}
         onToggle={() => setExpandedTrip(current => current === id ? null : id)} />;

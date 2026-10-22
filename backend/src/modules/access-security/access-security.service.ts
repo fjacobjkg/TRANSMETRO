@@ -12,14 +12,24 @@ export async function listAccesses(stationId?: number) {
 
 export async function saveAccess(actorId: number, input: { stationId?: number | undefined; name?: string | undefined; active?: boolean | undefined }, id?: number | undefined) {
   return prisma.$transaction(async (tx) => {
+    let previousStationId: number | undefined;
     if (id === undefined) {
       ensure(input.stationId !== undefined && input.name, 400, "Estación y nombre son obligatorios.");
+      ensure(input.active !== true, 409, "Crea el acceso inactivo, asigna un guardia y después habilítalo.");
       const station = await tx.estacion.findUnique({ where: { id_estacion: input.stationId } });
       ensure(station?.activo, 400, "Selecciona una estación activa.");
     } else {
       const existing = await tx.acceso.findUnique({ where: { id_acceso: id } });
       ensure(existing, 404, "No se encontró el acceso.");
+      if (input.stationId !== undefined && input.stationId !== existing.estacion_id) {
+        ensure(!existing.activo, 409, "Deshabilita el acceso antes de cambiarlo de estación.");
+        const station = await tx.estacion.findUnique({ where: { id_estacion: input.stationId } });
+        ensure(station?.activo, 400, "Selecciona una estación activa.");
+        previousStationId = existing.estacion_id;
+      }
       if (input.active === true && !existing.activo) {
+        const station = await tx.estacion.findUnique({ where: { id_estacion: input.stationId ?? existing.estacion_id } });
+        ensure(station?.activo, 400, "Selecciona una estación activa antes de habilitar el acceso.");
         const coverage = await tx.asignacion_guardia_acceso.count({ where: { acceso_id: id, ...current(), guardia: { activo: true } } });
         ensure(coverage > 0, 409, "Asigna un guardia vigente antes de habilitar el acceso.");
       }
@@ -33,8 +43,9 @@ export async function saveAccess(actorId: number, input: { stationId?: number | 
     }
     const item = id === undefined
       ? await tx.acceso.create({ data: { estacion_id: input.stationId!, nombre: input.name!, activo: input.active ?? false } })
-      : await tx.acceso.update({ where: { id_acceso: id }, data: { ...(input.name === undefined ? {} : { nombre: input.name }), ...(input.active === undefined ? {} : { activo: input.active }) } });
-    await writeAudit(tx, { userId: actorId, action: id === undefined ? "CREAR" : "ACTUALIZAR", entity: "acceso", entityId: item.id_acceso, description: item.nombre });
+      : await tx.acceso.update({ where: { id_acceso: id }, data: { ...(input.stationId === undefined ? {} : { estacion_id: input.stationId }), ...(input.name === undefined ? {} : { nombre: input.name }), ...(input.active === undefined ? {} : { activo: input.active }) } });
+    await writeAudit(tx, { userId: actorId, action: id === undefined ? "CREAR" : "ACTUALIZAR", entity: "acceso", entityId: item.id_acceso,
+      description: previousStationId === undefined ? item.nombre : `${item.nombre} · estación ${previousStationId} → ${item.estacion_id}` });
     return item;
   }, { isolationLevel: "Serializable" });
 }
@@ -87,7 +98,7 @@ export async function endGuardAssignment(actorId: number, id: number) {
     ensure(assignment && assignment.fecha_fin === null, 404, "No se encontró una asignación vigente.");
     if (assignment.acceso.activo) {
       const remaining = await tx.asignacion_guardia_acceso.count({ where: { acceso_id: assignment.acceso_id, id_asignacion_guardia_acceso: { not: id }, ...current(), guardia: { activo: true } } });
-      ensure(remaining > 0, 409, "No puedes retirar al último guardia de un acceso activo.");
+      ensure(remaining > 0, 409, "No puedes retirar al último guardia de un acceso activo. Primero deshabilita el acceso o asigna otro guardia vigente.");
     }
     const item = await tx.asignacion_guardia_acceso.update({ where: { id_asignacion_guardia_acceso: id }, data: { fecha_fin: new Date() } });
     await writeAudit(tx, { userId: actorId, action: "CERRAR_ASIGNACION", entity: "asignacion_guardia_acceso", entityId: id, description: `Acceso ${assignment.acceso.nombre} · ${assignment.guardia.nombre}` });

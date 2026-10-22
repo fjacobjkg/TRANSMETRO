@@ -6,33 +6,35 @@ import { auditEntityId, writeAudit } from "../audit/audit.service.js";
 import { calculateDepartureOccupancy, evaluateVisit } from "./route-operation.rules.js";
 import { attachVisitRevenue } from "../access-media/revenue.service.js";
 import { ensureBusPilot } from "../personnel/pilot-bus.service.js";
+import { operatorLineScope, assertOperableLine, availableOperatorBusScope } from "./operator-scope.js";
 const current = () => ({ fecha_fin: null, fecha_inicio: { lte: new Date() } });
 
 export async function listOperationalLines(user: AuthenticatedUser) {
   return { items: await prisma.linea.findMany({
-    where: { activo: true, ...(user.role === "OPERADOR_ESTACION" ? { estaciones: { some: { activo: true, estacion_id: { in: user.stationIds } } } } : {}) },
+    where: { activo: true, ...operatorLineScope(user) },
     orderBy: { codigo: "asc" },
-    include: { estaciones: { where: { activo: true }, orderBy: { orden: "asc" }, include: { estacion: true } }, asignaciones_bus: { where: current(), include: { bus: true } } },
+    include: { estaciones: { where: { activo: true }, orderBy: { orden: "asc" }, include: { estacion: true } },
+      asignaciones_bus: { where: { ...current(), ...(user.role === "OPERADOR_ESTACION" ? { bus: availableOperatorBusScope() } : {}) }, include: { bus: true } } },
   }) };
 }
 
 export async function startTrip(user: AuthenticatedUser, busId: number, lineId: number) {
   return prisma.$transaction(async (tx) => {
+    const line = await tx.linea.findUnique({ where: { id_linea: lineId }, include: { estaciones: { where: { activo: true }, orderBy: { orden: "asc" } } } });
+    ensure(line?.activo, 400, "La línea no está habilitada para operar.");
+    assertOperableLine(user, line.estaciones);
     await tx.$queryRaw`SELECT id FROM buses WHERE id = ${busId} FOR UPDATE`;
-    const [line, bus, assignment, open] = await Promise.all([
-      tx.linea.findUnique({ where: { id_linea: lineId }, include: { estaciones: { where: { activo: true }, orderBy: { orden: "asc" } } } }),
+    const [bus, assignment, open] = await Promise.all([
       tx.bus.findUnique({ where: { id_bus: busId } }),
       tx.asignacion_bus_linea.findFirst({ where: { bus_id: busId, linea_id: lineId, ...current() } }),
       tx.recorrido.findFirst({ where: { bus_id: busId, estado: "EN_CURSO" } }),
     ]);
-    ensure(line?.activo, 400, "La línea no está habilitada para operar.");
     ensure(bus?.activo && assignment, 400, "El bus no tiene una asignación vigente a esta línea.");
     const parking = await tx.asignacion_bus_parqueo.findFirst({ where: { bus_id: busId, ...current(), parqueo: { activo: true, estacion: { activo: true } } } });
     ensure(parking, 409, "La unidad no tiene un parqueo vigente asignado.");
     await ensureBusPilot(tx, busId, "La unidad no tiene un piloto vigente asignado.");
     ensure(!open, 409, "El bus ya tiene un recorrido en curso.");
     ensure(line.estaciones.length > 0, 409, "La línea no tiene estaciones configuradas.");
-    if (user.role === "OPERADOR_ESTACION") ensure(line.estaciones.some(({ estacion_id }) => user.stationIds.includes(estacion_id)), 403, "No tienes asignación vigente en esta línea.");
     const item = await tx.recorrido.create({ data: { bus_id: busId, linea_id: lineId, fecha_inicio: new Date(), estado: "EN_CURSO" } });
     await writeAudit(tx, { userId: user.id, action: "INICIAR_RECORRIDO", entity: "recorrido", entityId: item.id_recorrido, description: `Línea ${line.codigo} · bus ${bus.codigo}` });
     return item;
@@ -47,7 +49,7 @@ export async function listTrips(user: AuthenticatedUser, filters: { lineId?: num
     ...(filters.state === undefined ? {} : { estado: filters.state }),
     ...(filters.from || filters.to ? { fecha_inicio: { ...(filters.from ? { gte: new Date(`${filters.from}T00:00:00.000Z`) } : {}), ...(filters.to ? { lte: new Date(`${filters.to}T23:59:59.999Z`) } : {}) } } : {}),
     ...(filters.stationId !== undefined ? { visitas: { some: { estacion_id: filters.stationId } } } : {}),
-    ...(user.role === "OPERADOR_ESTACION" ? { linea: { estaciones: { some: { activo: true, estacion_id: { in: user.stationIds } } } } } : {}),
+    ...(user.role === "OPERADOR_ESTACION" ? { linea: operatorLineScope(user) } : {}),
   };
   const [items, total] = await Promise.all([
     prisma.recorrido.findMany({ where, orderBy: { fecha_inicio: "desc" }, skip: (filters.page - 1) * filters.pageSize, take: filters.pageSize, include: { linea: true, bus: true, visitas: { orderBy: { orden: "asc" }, include: { estacion: true, usuario: { select: { nombre: true } } } } } }),
@@ -67,6 +69,7 @@ export async function recordVisit(user: AuthenticatedUser, tripId: number | bigi
       include: { bus: true, linea: { include: { estaciones: { where: { activo: true }, orderBy: { orden: "asc" } } } }, visitas: { orderBy: { orden: "asc" }, select: { estacion_id: true, orden: true, fecha_hora: true, ocupacion: true } } },
     });
     ensure(trip && trip.estado === "EN_CURSO", 404, "No se encontró un recorrido abierto.");
+    assertOperableLine(user, trip.linea.estaciones);
     const sequence = trip.visitas.length + 1;
     const expected = trip.linea.estaciones[sequence - 1];
     ensure(expected, 409, "El recorrido ya completó todas las estaciones.");
@@ -113,7 +116,7 @@ export async function closeTrip(user: AuthenticatedUser, tripId: number | bigint
   return prisma.$transaction(async (tx) => {
     const trip = await tx.recorrido.findUnique({ where: { id_recorrido: BigInt(tripId) }, include: { linea: { include: { estaciones: { where: { activo: true } } } } } });
     ensure(trip?.estado === "EN_CURSO", 404, "No se encontró un recorrido abierto.");
-    if (user.role === "OPERADOR_ESTACION") ensure(trip.linea.estaciones.some(({ estacion_id }) => user.stationIds.includes(estacion_id)), 403, "No tienes asignación vigente en este recorrido.");
+    assertOperableLine(user, trip.linea.estaciones);
     if (state === "FINALIZADO") {
       const visits = await tx.visita.count({ where: { recorrido_id: trip.id_recorrido } });
       ensure(visits === trip.linea.estaciones.length, 409, "Completa todas las estaciones o cancela el recorrido.");

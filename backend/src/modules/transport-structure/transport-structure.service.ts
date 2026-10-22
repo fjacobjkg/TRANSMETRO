@@ -2,6 +2,7 @@ import { prisma } from "../../lib/prisma.js";
 import { ensure } from "../../lib/domain-error.js";
 import type { Prisma } from "../../../generated/prisma/client.js";
 import { writeAudit } from "../audit/audit.service.js";
+import { lineStationsSchema } from "./transport-structure.schema.js";
 
 const currentAssignment = () => ({ fecha_fin: null, fecha_inicio: { lte: new Date() } });
 
@@ -67,7 +68,10 @@ export async function saveStation(actorId: number, input: { code?: string | unde
         ensure(activeLineMemberships === 0 && openVisits === 0, 409, "Retira la estación de líneas activas y cierra sus recorridos antes de desactivarla.");
       }
     }
-    if (id === undefined) ensure(input.code && input.name && input.municipalityId !== undefined, 400, "Código, nombre y municipalidad son obligatorios.");
+    if (id === undefined) {
+      ensure(input.code && input.name && input.municipalityId !== undefined, 400, "Código, nombre y municipalidad son obligatorios.");
+      ensure(input.active !== true, 409, "Crea la estación en preparación, asóciala a una línea y después actívala.");
+    }
     const item = id === undefined
       ? await tx.estacion.create({ data: { codigo: input.code!, nombre: input.name!, municipalidad_id: input.municipalityId!, activo: input.active ?? false } })
       : await tx.estacion.update({ where: { id_estacion: id }, data: { ...(input.code === undefined ? {} : { codigo: input.code }), ...(input.name === undefined ? {} : { nombre: input.name }), ...(input.municipalityId === undefined ? {} : { municipalidad_id: input.municipalityId }), ...(input.active === undefined ? {} : { activo: input.active }) } });
@@ -118,13 +122,20 @@ export async function getLine(id: number) {
 }
 
 async function assertLineCanOperate(tx: Prisma.TransactionClient, lineId: number) {
-  const line = await tx.linea.findUnique({ where: { id_linea: lineId }, include: { estaciones: { where: { activo: true } } } });
+  const line = await tx.linea.findUnique({ where: { id_linea: lineId }, include: {
+    estaciones: { where: { activo: true }, orderBy: { orden: "asc" }, include: { estacion: true } },
+  } });
   ensure(line, 404, "No se encontró la línea.");
   const stationIds = line.estaciones.map(({ estacion_id }) => estacion_id);
   const stationCount = stationIds.length;
   ensure(stationCount > 0, 409, "Agrega estaciones ordenadas antes de habilitar la línea.");
-  const assignedBuses = await tx.asignacion_bus_linea.count({ where: { linea_id: lineId, ...currentAssignment(), bus: { activo: true } } });
-  ensure(assignedBuses >= stationCount && assignedBuses <= stationCount * 2, 409, `La línea requiere entre ${stationCount} y ${stationCount * 2} buses vigentes.`);
+  const configuration = lineStationsSchema.safeParse({ stations: line.estaciones.map(entry => ({
+    stationId: entry.estacion_id, order: entry.orden,
+    distanceToNext: entry.distancia_siguiente === null ? null : Number(entry.distancia_siguiente),
+  })) });
+  ensure(configuration.success && line.estaciones.slice(0, -1).every(entry => entry.distancia_siguiente !== null),
+    409, "Configura un orden consecutivo y las distancias entre estaciones antes de habilitar la línea.");
+  ensure(line.estaciones.every(entry => entry.estacion.activo), 409, "Activa todas las estaciones configuradas antes de habilitar la línea.");
   const operators = await tx.asignacion_usuario_estacion.findMany({
     where: { estacion_id: { in: stationIds }, ...currentAssignment(), usuario: { activo: true, rol: { activo: true, nombre: "OPERADOR_ESTACION" } } },
     select: { estacion_id: true },
@@ -141,6 +152,25 @@ async function assertLineCanOperate(tx: Prisma.TransactionClient, lineId: number
     const stationAccesses = byStation.get(stationId) ?? [];
     return stationAccesses.length > 0 && stationAccesses.every((access) => access.asignaciones_guardia.length > 0);
   }), 409, "Cada estación necesita accesos activos y cada acceso debe tener un guardia vigente.");
+  const assignedBuses = await tx.asignacion_bus_linea.findMany({
+    where: { linea_id: lineId, ...currentAssignment(), bus: { activo: true } },
+    select: { bus: { select: {
+      asignaciones_parqueo: {
+        where: { ...currentAssignment(), parqueo: { activo: true, estacion: { activo: true } } },
+        select: { id_asignacion_bus_parqueo: true },
+      },
+      asignaciones_piloto: {
+        where: { ...currentAssignment(), piloto: { activo: true } },
+        select: { id_asignacion_piloto_bus: true },
+      },
+    } } },
+  });
+  ensure(assignedBuses.length >= stationCount && assignedBuses.length <= stationCount * 2,
+    409, `La línea requiere entre ${stationCount} y ${stationCount * 2} buses vigentes.`);
+  ensure(assignedBuses.every(({ bus }) => bus.asignaciones_parqueo.length > 0),
+    409, "Cada bus de la línea debe tener un parqueo vigente en una estación activa.");
+  ensure(assignedBuses.every(({ bus }) => bus.asignaciones_piloto.length > 0),
+    409, "Cada bus de la línea debe tener un piloto vigente y activo.");
 }
 
 export async function saveLine(actorId: number, input: { code?: string | undefined; name?: string | undefined; municipalityId?: number | undefined; active?: boolean | undefined }, id?: number | undefined) {
@@ -167,15 +197,18 @@ export async function saveLine(actorId: number, input: { code?: string | undefin
 }
 
 export async function replaceLineStations(actorId: number, lineId: number, stations: Array<{ stationId: number; order: number; distanceToNext?: number | null | undefined }>) {
+  const configuration = lineStationsSchema.safeParse({ stations });
+  ensure(configuration.success, 400, configuration.error?.issues[0]?.message ?? "La configuración de estaciones no es válida.");
   return prisma.$transaction(async (tx) => {
     const line = await tx.linea.findUnique({ where: { id_linea: lineId } });
     ensure(line, 404, "No se encontró la línea.");
     const openTrips = await tx.recorrido.count({ where: { linea_id: lineId, estado: "EN_CURSO" } });
     ensure(openTrips === 0, 409, "Cierra los recorridos abiertos antes de modificar el orden de la línea.");
+    ensure(!line.activo, 409, "Deshabilita la línea para dejarla en preparación antes de modificar sus estaciones. Después podrás habilitarla al completar los requisitos operativos.");
     const previous = await tx.linea_estacion.findMany({ where: { linea_id: lineId }, select: { estacion_id: true } });
     const ids = stations.map(({ stationId }) => stationId);
     const found = await tx.estacion.findMany({ where: { id_estacion: { in: ids } }, select: { id_estacion: true } });
-    ensure(found.length === ids.length, 400, "Todas las estaciones deben existir. Su primera vinculación las habilita.");
+    ensure(found.length === ids.length, 400, "Todas las estaciones deben existir antes de asociarlas a la línea.");
     await tx.linea_estacion.deleteMany({ where: { linea_id: lineId } });
     await tx.linea_estacion.createMany({
       data: stations.map((station) => ({
@@ -191,8 +224,8 @@ export async function replaceLineStations(actorId: number, lineId: number, stati
       const remaining = await tx.linea_estacion.count({ where: { estacion_id, activo: true } });
       if (remaining === 0) await tx.estacion.update({ where: { id_estacion: estacion_id }, data: { activo: false } });
     }
-    await tx.estacion.updateMany({ where: { id_estacion: { in: ids }, activo: false }, data: { activo: true } });
-    if (line.activo) await assertLineCanOperate(tx, lineId);
+    // Preparing a route does not activate its stations or require operational staffing.
+    // The full readiness checks run only when saveLine enables the line.
     await writeAudit(tx, { userId: actorId, action: "ACTUALIZAR_ESTACIONES", entity: "linea", entityId: lineId, description: `Se configuraron ${stations.length} estaciones.` });
     return tx.linea_estacion.findMany({ where: { linea_id: lineId }, orderBy: { orden: "asc" }, include: { estacion: true } });
   }, { isolationLevel: "Serializable" });

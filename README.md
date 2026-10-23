@@ -22,8 +22,6 @@ La recaudación es una estimación informativa: el sistema no procesa cobros ni 
 | Administrador | Configuración de la red, cuentas, personal, seguridad, flota, seguimiento y reportes. |
 | Operador de estación | Operación y consultas dentro de las estaciones y líneas autorizadas. |
 
-El rol Administrativo se conserva internamente y está deshabilitado temporalmente en el frontend mediante `frontend/src/config/features.ts`.
-
 ## Capturas de pantalla
 
 Estas secciones pueden actualizarse reemplazando las imágenes de `docs/capturas/` y conservando sus nombres, o modificando los enlaces.
@@ -41,9 +39,6 @@ Estas secciones pueden actualizarse reemplazando las imágenes de `docs/capturas
 ![Consultas y reportes de Transmetro](docs/capturas/reportes.jpg)
 
 ### Operación de estación
-
-> Espacio para una captura del flujo del operador.
-
 
 ![Registro de recorridos y visitas](docs/capturas/operacion.jpg)
 
